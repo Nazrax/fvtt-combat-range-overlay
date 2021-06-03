@@ -1,5 +1,7 @@
 {
   "movement-planner": {
-    "controlButton": "Show movement overlay"
+    "controlButton": "Show movement overlay",
+    "is-active": "Active?",
+    "is-active-hint": "Is the overlay active?"
   }
 }

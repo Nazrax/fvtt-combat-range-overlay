@@ -1,3 +1,9 @@
+import {getCurrentToken} from "./utility.js";
+import {MODULE_NAME, SETTING_IS_ACTIVE} from "./constants.js";
+import {keyboard} from "./keyboard.js";
+
+const WEAPON_RANGES = [5, 10, 30, 60, 120];
+
 /*
 // Main choices
 const WEAPON_RANGE = 60;
@@ -662,62 +668,46 @@ Hooks.on("ready", function() {
 let movementPlannerTool;
 
 Hooks.once("init", () => {
+  game.settings.register(MODULE_NAME, SETTING_IS_ACTIVE, {
+    name: "movement-planner.is-active",
+    hint: "movement-planner.is-active-hint",
+    scope: "client",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
   window.movementPlanner = {
-    active: false  // TODO: Figure out how to save this between sessions
-  }
-})
-
-let shiftDown = false;
-document.addEventListener('keydown', (event) => {
-  if (event.key === "Shift") {
-    shiftDown = true;
-  }
-});
-
-document.addEventListener('keyup', (event) => {
-  if (event.key === "Shift") {
-    shiftDown = false;
-  }
+    active: game.settings.get(MODULE_NAME, SETTING_IS_ACTIVE)
+  };
 })
 
 const MOVEMENT_PLANNER_BUTTON = "movementPlannerButton";
 
+function _submitDialog(i, html) {
+  console.log("_submitDialog", i, html);
+}
+
 function _movementPlannerClick(toggled, controls) {
-  if (shiftDown) {  // Pop quick settings
-    // Assume we want to activate if the user is opening the dialog
-    movementPlanner.active = true;
+  if (keyboard.isDown("Shift")) {  // Pop quick settings
+    let token = getCurrentToken();
+    if (!token) {
+      ui.notifications.warn("Can't open quick settings without a selected token");
+    } else {
+      // Assume we want to activate if the user is opening the dialog
+      movementPlanner.active = true;
+
+      let buttons = Object.fromEntries(WEAPON_RANGES.map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
+
+      let d = new Dialog({
+        title: "Movement Planner Quick Settings",
+        content: "<p>Weapon Range:</p>",
+        buttons
+      }, {id: "movementPlannerDialog"});
+      d.render(true);
+    }
+
     controls.find(group => group.name === "token").tools.find(t => t.name === MOVEMENT_PLANNER_BUTTON).active = movementPlanner.active
-
-    let d = new Dialog({
-      title: "Movement Planner Quick Settings",
-      content: "<p>Hello world</p>",
-      buttons: {
-        five: {
-          label: "5",
-          callback: (...args) => console.log("5", args),
-        },
-        ten: {
-          label: "10",
-          callback: (...args) => console.log("10", args),
-        },
-        thirty: {
-          label: "30",
-          callback: (...args) => console.log("30", args),
-        },
-        sixty: {
-          label: "60",
-          callback: (...args) => console.log("60", args),
-        },
-        onetwenty: {
-          label: "120",
-          callback: (...args) => console.log("120", args),
-        },
-
-      }
-    }, {id: "movementPlannerDialog"});
-    let rv = d.render(true);
-    console.log("RV", rv);
-
   } else {
     movementPlanner.active = toggled;
 
@@ -730,91 +720,18 @@ function _movementPlannerClick(toggled, controls) {
 }
 
 Hooks.on('getSceneControlButtons', (controls) => {
-  console.log("main:getSceneControlButtons", controls);
   if (!movementPlannerTool) {
     movementPlannerTool = {
       name: MOVEMENT_PLANNER_BUTTON,
       title: "movement-planner.controlButton",
-      icon: "fas fa-dot-circle",
+      icon: "fas fa-people-arrows",
       toggle: true,
       active: movementPlanner?.active,
       onClick: (toggled) => _movementPlannerClick(toggled, controls),
       visible: true,  // TODO: Figure out how to disable this from Settings
     }
   }
-  let testTool = {
-    name: "testTool",
-    title: "Test Tool",
-    icon: "far fa-dot-circle",
-    button: true,
-    active: true,
-    onClick: (...args) => console.log(args),
-    visible: true,
-  }
+
   const tokenControls = controls.find(group => group.name === "token").tools
   tokenControls.push(movementPlannerTool);
-  tokenControls.push(testTool);
 });
-
-
-/*
-Hooks.on('getSceneControlButtons', (controls) => {
-  controls.push({
-    name: 'movementPlanner',
-    title: 'movement-planner.control',
-    icon: 'fas fa-people-arrows',
-    layer: 'SightLayer',
-    activeTool: 'five',
-    visible: true,
-    tools: [
-      {
-        name: 'active',
-        title: 'movement-planner.active',
-        icon: 'fas fa-toggle-on',
-        toggle: true,
-        active: false,
-        onClick: (toggled) => console.log(toggled)
-      },
-      {
-        name: 'combat-only',
-        title: 'movement-planner.combat-only',
-        icon: 'far fa-eye',
-        toggle: true,
-        active: true,
-        onClick: (toggled) => console.log(toggled)
-      },
-      {
-        name: 'five',
-        title: 'movement-planner.five',
-        icon: 'fas fa-fist-raised',
-        onClick: () => console.log("five")
-      },
-      {
-        name: 'ten',
-        title: 'movement-planner.ten',
-        icon: 'fas fa-sword',
-        onClick: () => console.log("ten")
-      },
-      {
-        name: 'thirty',
-        title: 'movement-planner.thirty',
-        icon: 'fas fa-lips',
-        onClick: () => console.log("thirty")
-      },
-      {
-        name: 'sixty',
-        title: 'movement-planner.sixty',
-        icon: 'fas fa-bow-arrow',
-        onClick: () => console.log("sixty")
-      },
-      {
-        name: 'one-hundred-twenty',
-        title: 'movement-planner.one-hundred-twenty',
-        icon: 'fas fa-binoculars',
-        onClick: () => console.log("One hundred twenty")
-      }
-    ]
-  });
-  console.log(controls);
-})
-*/
