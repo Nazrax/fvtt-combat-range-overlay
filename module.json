@@ -12,7 +12,7 @@
    "path": "lang/en.json"
   }
  ],
- "scripts": [
-   "scripts/main.js"
+ "esmodules": [
+   "modules/main.js"
  ]
 }
