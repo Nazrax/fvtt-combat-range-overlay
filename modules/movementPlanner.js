@@ -31,6 +31,8 @@ const pathLineWidth = 1;
 const highlightLineWidth = 3;
 const potentialTargetLineWidth = 3;
 
+const TEXT_MARGIN = 2;
+
 // Fonts
 const movementCostStyle = {
   fontFamily: 'Arial',
@@ -42,10 +44,10 @@ const movementCostStyle = {
 
 const turnOrderStyle = {
   fontFamily: 'Arial',
-  fontSize: 40,
+  fontSize: 25,
   fill: 0xffffff, // white
   stroke: 0x000000, // black
-  strokeThickness: 6
+  strokeThickness: 5
 };
 
 export class MovementPlanner {
@@ -368,8 +370,10 @@ export class MovementPlanner {
         const combatantToken = canvasTokensGet(combatantTokenId);
         if (turnOrder > 0 && combatantToken.visible) {
           const text = new PIXI.Text(turnOrder, turnOrderStyle);
-          text.position.x = combatantToken.x + combatantToken.hitArea.width / 2 - text.width / 2;
-          text.position.y = combatantToken.y + combatantToken.hitArea.height / 2 - text.height / 2;
+          //text.position.x = combatantToken.x + combatantToken.hitArea.width / 2 - text.width / 2;
+          //text.position.y = combatantToken.y + combatantToken.hitArea.height / 2 - text.height / 2;
+          text.position.x = combatantToken.x + combatantToken.hitArea.width - text.width - TEXT_MARGIN;
+          text.position.y = combatantToken.y + combatantToken.hitArea.height - text.height - TEXT_MARGIN;
           canvas.tokens.addChild(text);
           this.overlays.turnOrderTexts.push(text);
         }
