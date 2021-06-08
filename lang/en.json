@@ -18,9 +18,8 @@
     "visibilities": {
       "always": "Always",
       "combat": "During combat",
-      "hotkeys": "Only with ALT or token drag (if enabled)"
-    },
-    "hotkeys": "Show with hotkeys?",
-    "hotkeys-hint": "Show overlay during token drag or when ALT is held"
+      "combat-and-hotkeys": "During combat or with ALT or token drag",
+      "hotkeys": "Only with ALT or token drag"
+    }
   }
 }

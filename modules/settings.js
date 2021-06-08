@@ -4,6 +4,7 @@ import {MovementPlanner} from "./movementPlanner.js"
 export const overlayVisibility = {
   ALWAYS: 'always',
   COMBAT: 'combat',
+  COMBAT_AND_HOTKEYS: 'combat_and_hotkeys',
   HOTKEYS: 'hotkeys'
 };
 
@@ -14,8 +15,7 @@ const settingNames = {
   SHOW_POTENTIAL_TARGETS: 'show-potential-targets',
   SHOW_DIFFICULT_TERRAIN: 'show-difficult-terrain',
   SHOW_WALLS: 'show-walls',
-  MOVEMENT_ALPHA: 'movement-alpha',
-  HOTKEYS: 'hotkeys'
+  MOVEMENT_ALPHA: 'movement-alpha'
 };
 const hiddenSettings = [settingNames.IS_ACTIVE];
 const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS, settingNames.ALWAYS_SHOW];
@@ -60,9 +60,10 @@ Hooks.once("init", () => {
     type: String,
     default: overlayVisibility.COMBAT,
     choices: {
-      'always': `${MODULE_NAME}.visibilities.always`,
-      'combat': `${MODULE_NAME}.visibilities.combat`,
-      'never': `${MODULE_NAME}.visibilities.hotkey`
+      always: `${MODULE_NAME}.visibilities.always`,
+      combat_and_hotkeys: `${MODULE_NAME}.visibilities.combat-and-hotkeys`,
+      combat: `${MODULE_NAME}.visibilities.combat`,
+      hotkeys: `${MODULE_NAME}.visibilities.hotkeys`
     },
     onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
   })
