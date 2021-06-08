@@ -280,8 +280,8 @@ export class MovementPlanner {
   canvasInitHook() {
     globalThis.movementPlanner.instance.clearAll();
     //globalThis.movementPlanner.instance.unregisterHooks();
-    globalThis.movementPlanner.instance = null;
-    globalThis.movementPlanner = undefined;
+    //globalThis.movementPlanner.instance = null;
+    //globalThis.movementPlanner = undefined;
   }
 
   registerHooks() {
