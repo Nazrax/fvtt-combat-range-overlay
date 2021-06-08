@@ -251,9 +251,9 @@ export class MovementPlanner {
         showOverlay = true;
       } else if (Settings.getVisibility() === Settings.overlayVisibility.COMBAT && currentToken.inCombat) {
         showOverlay = true;
-      }
-
-      if (hotkeys && (Settings.getVisibility() === Settings.overlayVisibility.HOTKEYS || Settings.isHotkeys())) {
+      } else if (Settings.getVisibility() === Settings.overlayVisibility.COMBAT_AND_HOTKEYS && (currentToken.inCombat || hotkeys)) {
+        showOverlay = true;
+      } else if (Settings.getVisibility() === Settings.overlayVisibility.HOTKEYS && hotkeys) {
         showOverlay = true;
       }
 
