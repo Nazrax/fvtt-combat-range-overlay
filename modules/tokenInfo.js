@@ -87,6 +87,7 @@ function updateLocation(token) {
 Hooks.on("createCombatant", (combat, info, something, someId) => {
   const token = canvasTokensGet(info.tokenId);
   updateMeasureFrom(token);
+  globalThis.movementPlanner.instance.fullRefresh();
 });
 
 Hooks.on("updateCombat", (combat, something, diff, someOtherId) => {
@@ -94,15 +95,18 @@ Hooks.on("updateCombat", (combat, something, diff, someOtherId) => {
     const token = canvasTokensGet(diff.pf2e.endTurn)
     updateMeasureFrom(token);
   }
+  globalThis.movementPlanner.instance.fullRefresh();
 });
 
 Hooks.on("updateToken", (scene, token, foo, bar) => {
   const tokenId = token.id ?? token._id;
-  console.log(`updateToken: ${tokenId} moved to ${token.x}/${token.y}`);
+  const realToken = canvasTokensGet(tokenId); // Get the
+  //console.log(`updateToken: ${tokenId} moved to ${token.x}/${token.y}`);
   updateLocation(token);
-  if (!token.inCombat) {
+  if (!realToken.inCombat) {
     updateMeasureFrom(token);
   }
+  globalThis.movementPlanner.instance.fullRefresh();
 });
 
 // Hooks.on("deleteCombatant", (combat, tokenInfo, something, someId) => {

@@ -240,22 +240,21 @@ export class MovementPlanner {
       return;
     }
 
+    let hotkeys = false;
+    if (keyboard.isDown("Alt") || mouse.isLeftDrag()) {
+      hotkeys = true;
+    }
+
     let showOverlay = false;
     if (Settings.isActive()) {
-      if (keyboard.isDown("Alt") || mouse.isLeftDrag()) {
+      if (Settings.getVisibility() === Settings.overlayVisibility.ALWAYS) {
         showOverlay = true;
-      } else if (Settings.isActive()) {
-        if (Settings.isAlwaysShow()) {
-          showOverlay = true;
-        } else {
-          for (const combat of game.combats) {
-            const currentTokenId = currentToken.id;
-            const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId);
-            if (currentCombatant) {
-              showOverlay = true;
-            }
-          }
-        }
+      } else if (Settings.getVisibility() === Settings.overlayVisibility.COMBAT && currentToken.inCombat) {
+        showOverlay = true;
+      }
+
+      if (hotkeys && (Settings.getVisibility() === Settings.overlayVisibility.HOTKEYS || Settings.isHotkeys())) {
+        showOverlay = true;
       }
 
       if (showOverlay) {
