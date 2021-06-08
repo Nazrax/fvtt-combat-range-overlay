@@ -2,6 +2,16 @@
   "movement-planner": {
     "controlButton": "Show movement overlay",
     "is-active": "Active?",
-    "is-active-hint": "Is the overlay active?"
+    "is-active-hint": "Is the overlay active?",
+    "show-turn-order": "Draw turn order?",
+    "show-turn-order-hint": "Show combatant turn orders relative to the active token",
+    "show-potential-targets": "Indicate potential targets?",
+    "show-potential-targets-hint": "Circle potential targets; color indicates how many actions of movement to reach target",
+    "show-difficult-terrain": "Show difficult terrain?",
+    "show-difficult-terrain-hint": "Draw an overlay on top of difficult terrain",
+    "show-walls": "Show walls?",
+    "show-walls-hint": "Draw an overlay on top of all walls",
+    "always-show": "Always visible?",
+    "always-show-hint": "Overlay is visible even when not targeting or dragging"
   }
 }
