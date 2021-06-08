@@ -11,7 +11,16 @@
     "show-difficult-terrain-hint": "Draw an overlay on top of difficult terrain",
     "show-walls": "Show walls?",
     "show-walls-hint": "Draw an overlay on top of all walls",
-    "always-show": "Always visible?",
-    "always-show-hint": "Overlay is visible even when not targeting or dragging"
+    "movement-alpha": "Overlay opacity",
+    "movement-alpha-hint": "Lower values are more transparent",
+    "visibility": "Overlay visibility",
+    "visibility-hint": "When should the overlay be visible?",
+    "visibilities": {
+      "always": "Always",
+      "combat": "During combat",
+      "hotkeys": "Only with ALT or token drag (if enabled)"
+    },
+    "hotkeys": "Show with hotkeys?",
+    "hotkeys-hint": "Show overlay during token drag or when ALT is held"
   }
 }
