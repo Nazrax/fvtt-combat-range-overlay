@@ -85,7 +85,7 @@ function updateLocation(token) {
 }
 
 Hooks.on("createCombatant", (combat, info, something, someId) => {
-  const token = canvasTokensGet(info.tokenId);
+  const token = canvasTokensGet(info.tokenId ?? combat.token.id);
   updateMeasureFrom(token);
   globalThis.movementPlanner.instance.fullRefresh();
 });

@@ -30,8 +30,9 @@ export function safeDestroy(thing) {
 
 // For some reason the combatant just has the Token's data structure, not the Token object
 export function getCombatantToken(combatant) {
+  const tokenId = combatant.tokenId ?? combatant.token.id;
   // noinspection JSUnresolvedFunction
-  return canvas.tokens.get(combatant.tokenId);
+  return canvas.tokens.get(tokenId);
 }
 
 // Abstract this to avoid Idea's warnings

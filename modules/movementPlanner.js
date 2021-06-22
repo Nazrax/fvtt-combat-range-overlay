@@ -147,7 +147,7 @@ export class MovementPlanner {
 
     for (const combat of game.combats) {
       const currentTokenId = currentToken.id;
-      const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId);
+      const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId || c.token?.id === currentTokenId);
       if (currentCombatant) {
         inCombat = true;
         break;
@@ -340,7 +340,7 @@ export class MovementPlanner {
   drawTurnOrder() {
     const currentTokenId = getCurrentToken().id;
     for (const combat of game.combats) {
-      const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId);
+      const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId || c.token?.id === currentTokenId);
       if (!currentCombatant) {
         continue;
       }
