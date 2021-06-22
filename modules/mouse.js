@@ -50,6 +50,8 @@ export const mouse = new Mouse();
 
 
 Hooks.on("libWrapper.Ready", () => {
+  libWrapper.ignore_conflicts(MODULE_NAME, ['drag-ruler', 'enhanced-terrain-layer'], ['Token.prototype._onDragLeftStart', 'Token.prototype._onDragLeftDrop', 'Token.prototype._onDragLeftCancel'])
+
   libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftStart', mouse._dragStartWrapper.bind(mouse), 'WRAPPER');
   libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftDrop', mouse._dragDropWrapper.bind(mouse), 'WRAPPER');
   libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftCancel', mouse._dragCancelWrapper.bind(mouse), 'WRAPPER');
