@@ -156,7 +156,7 @@ export class MovementPlanner {
     for (const combatant of game.combat.combatants) {
       const combatantToken = getCombatantToken(combatant);
       if (getCombatantTokenDisposition(combatantToken) !== myDisposition) {
-        if (combatantToken.visible) {
+        if (combatantToken.visible && !combatant.defeated) {
           let tilesInRange = calculateTilesInRange(weaponRangeInTiles, combatantToken);
           let bestCost = MAX_DIST;
 
@@ -351,18 +351,22 @@ export class MovementPlanner {
 
       let turnOrder = 0;
       for (const combatant of head.concat(tail)) {
-        const combatantTokenId = combatant.token._id
-        const combatantToken = canvasTokensGet(combatantTokenId);
-        if (turnOrder > 0 && combatantToken.visible) {
-          const text = new PIXI.Text(turnOrder, turnOrderStyle);
-          //text.position.x = combatantToken.x + combatantToken.hitArea.width / 2 - text.width / 2;
-          //text.position.y = combatantToken.y + combatantToken.hitArea.height / 2 - text.height / 2;
-          text.position.x = combatantToken.x + combatantToken.hitArea.width - text.width - TEXT_MARGIN;
-          text.position.y = combatantToken.y + combatantToken.hitArea.height - text.height - TEXT_MARGIN;
-          canvas.tokens.addChild(text);
-          this.overlays.turnOrderTexts.push(text);
+        if (!combatant.defeated) {
+          const combatantTokenId = combatant.token.id
+          const combatantToken = canvasTokensGet(combatantTokenId);
+
+          if (turnOrder > 0 && combatantToken.visible) {
+            const text = new PIXI.Text(turnOrder, turnOrderStyle);
+            //text.position.x = combatantToken.x + combatantToken.hitArea.width / 2 - text.width / 2;
+            //text.position.y = combatantToken.y + combatantToken.hitArea.height / 2 - text.height / 2;
+            const ti = TokenInfo.getById(combatantTokenId);
+            text.position.x = ti.location.x + combatantToken.hitArea.width - text.width - TEXT_MARGIN;
+            text.position.y = ti.location.y + combatantToken.hitArea.height - text.height - TEXT_MARGIN;
+            canvas.tokens.addChild(text);
+            this.overlays.turnOrderTexts.push(text);
+          }
+          turnOrder++
         }
-        turnOrder++
       }
     }
   }
