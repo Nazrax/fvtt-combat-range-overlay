@@ -144,17 +144,8 @@ export class MovementPlanner {
 
   drawPotentialTargets(movementCosts) {
     const currentToken = getCurrentToken();
-    let inCombat = false;
 
-    for (const combat of game.combats) {
-      const currentTokenId = currentToken.id;
-      const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId || c.token?.id === currentTokenId);
-      if (currentCombatant) {
-        inCombat = true;
-        break;
-      }
-    }
-    if (!inCombat) {
+    if (!currentToken.inCombat) {
       return;
     }
 
@@ -226,12 +217,10 @@ export class MovementPlanner {
   }
 
   dragHandler(dragging) {
-    console.log("DRAG HANDLER:", dragging);
     this.fullRefresh();
   }
 
   altKeyHandler(event, state) {
-    console.log("ALT KEY HANDLER", state);
     this.fullRefresh();
   }
 
@@ -271,25 +260,19 @@ export class MovementPlanner {
   // }
 
   renderApplicationHook() {
-    console.log("HOOK: Render Application");
     this.fullRefresh();
   }
 
   targetTokenHook() {
-    console.log("HOOK: Target Token");
     this.newTarget = true;
     this.fullRefresh();
   }
 
   canvasInitHook() {
     globalThis.movementPlanner.instance.clearAll();
-    //globalThis.movementPlanner.instance.unregisterHooks();
-    //globalThis.movementPlanner.instance = null;
-    //globalThis.movementPlanner = undefined;
   }
 
   registerHooks() {
-    console.log("MovementPlanner - registerHooks");
     this.hookIDs.renderApplication = Hooks.on("renderApplication", () => this.renderApplicationHook());
     this.hookIDs.targetToken = Hooks.on("targetToken", () => this.targetTokenHook());
     this.hookIDs.canvasInit = Hooks.on("canvasInit", () => this.canvasInitHook());
@@ -342,7 +325,7 @@ export class MovementPlanner {
   drawTurnOrder() {
     const currentTokenId = getCurrentToken().id;
     for (const combat of game.combats) {
-      const currentCombatant = combat.combatants.find(c => c.tokenId === currentTokenId || c.token?.id === currentTokenId);
+      const currentCombatant = combat.combatants.find(c => c.token.id === currentTokenId);
       if (!currentCombatant) {
         continue;
       }
@@ -354,7 +337,7 @@ export class MovementPlanner {
       const tail = [];
 
       for (const combatant of sortedCombatants) {
-        const combatantTokenId = combatant.token._id
+        const combatantTokenId = combatant.token.id
         if (!seenCurrent && combatantTokenId === currentTokenId) {
           seenCurrent = true;
         }
@@ -402,7 +385,7 @@ export class MovementPlanner {
 
     for (const tile of movementCostMap.values()) {
       let drawTile = false;
-      if (targetRangeMap.size === 0 || idealTileMap.has(tile.key)) {
+      if (!showOnlyTargetPath || idealTileMap.has(tile.key)) {
         drawTile = true;
       } else {
         for (const idealTile of idealTileMap.values()) {
