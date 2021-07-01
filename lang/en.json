@@ -1,5 +1,6 @@
 {
   "movement-planner": {
+    "no-good-tiles": "No tiles are within movement range AND attack range",
     "controlButton": "Show movement overlay",
     "is-active": "Active?",
     "is-active-hint": "Is the overlay active?",
