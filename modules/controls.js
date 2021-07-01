@@ -6,18 +6,20 @@ import * as Settings from "./settings.js";
 const MOVEMENT_PLANNER_BUTTON = "movementPlannerButton";
 
 async function _submitDialog(i, html) {
-  console.log("_submitDialog", i, html);
+  // console.log("_submitDialog", i, html);
   await TokenInfo.current.setWeaponRange(i);
 }
 
 async function _movementPlannerClick(toggled, controls) {
+  let isActive = Settings.isActive()
+
   if (keyboard.isDown("Shift")) {  // Pop quick settings
     let token = getCurrentToken();
     if (!token) {
       ui.notifications.warn("Can't open quick settings without a selected token");
     } else {
       // Assume we want to activate if the user is opening the dialog
-      await Settings.setActive(true);
+      isActive = true;
 
       let buttons = Object.fromEntries(getWeaponRanges().map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
 
@@ -37,13 +39,13 @@ async function _movementPlannerClick(toggled, controls) {
       globalThis.movementPlanner.instance.fullRefresh();
     }
   } else {
-    console.log("TOGGLING", toggled);
-    await Settings.setActive(toggled);
-    console.log("IsActive is now", Settings.isActive())
+    isActive = toggled;
   }
 
   // Ensure button matches active state
-  controls.find(group => group.name === "token").tools.find(t => t.name === MOVEMENT_PLANNER_BUTTON).active = Settings.isActive();
+  // We _must_ set .active _before_ using await or the button will be drawn and we'll be too late
+  controls.find(group => group.name === "token").tools.find(t => t.name === MOVEMENT_PLANNER_BUTTON).active = isActive;
+  await Settings.setActive(isActive);
 }
 
 let movementPlannerButton;

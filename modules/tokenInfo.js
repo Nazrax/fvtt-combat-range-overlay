@@ -5,7 +5,6 @@ export class TokenInfo {
   static _tokenInfoMap = new Map();
 
   constructor(tokenId) {
-    console.log("Creating new TokenInfo", tokenId);
     this.tokenId = tokenId;
     this.token = canvasTokensGet(this.tokenId);
     this.measureFrom = undefined;
@@ -17,18 +16,18 @@ export class TokenInfo {
     TokenInfo._tokenInfoMap.set(tokenId, this);
   }
 
-  updateLocation(location) {
-    if (!location) {
-      location = {x: this.token.x, y: this.token.y};
-    }
-    this.location = location;
+  updateLocation(updateData) {
+    this.location  = {
+      x: updateData?.x ?? this.token.x,
+      y: updateData?.y ?? this.token.y
+    };
   }
 
-  updateMeasureFrom(location) {
-    if (!location) {
-      location = {x: this.token.x, y: this.token.y};
-    }
-    this.measureFrom = location;
+  updateMeasureFrom(updateData) {
+    this.measureFrom = {
+      x: updateData?.x ?? this.token.x,
+      y: updateData?.y ?? this.token.y
+    };
   }
 
   static get current() {
@@ -45,11 +44,11 @@ export class TokenInfo {
   }
 
   get weaponRange() {
-    return this.token.getFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE) ?? DEFAULT_WEAPON_RANGE;
+    return this.token.document.getFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE) ?? DEFAULT_WEAPON_RANGE;
   }
 
   async setWeaponRange(range) {
-    await this.token.setFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE, range);
+    await this.token.document.setFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE, range);
   }
 
   get speed() {
@@ -70,47 +69,45 @@ export class TokenInfo {
   }
 }
 
-function updateMeasureFrom(token) {
-  const tokenId = token.id ?? token._id;
+function updateMeasureFrom(token, updateData) {
+  const tokenId = token.id;
   const tokenInfo = TokenInfo.getById(tokenId);
-  tokenInfo.updateMeasureFrom({x: token.x, y: token.y});
-  console.log(`Updated ${tokenId}'s measureFrom to ${tokenInfo.measureFrom.x}/${tokenInfo.measureFrom.y}`)
+  tokenInfo.updateMeasureFrom(updateData);
 }
 
-function updateLocation(token) {
-  const tokenId = token.id ?? token._id;
+function updateLocation(token, updateData) {
+  const tokenId = token.id;
   const tokenInfo = TokenInfo.getById(tokenId);
-  tokenInfo.updateLocation({x: token.x, y: token.y});
-  console.log(`Updated ${tokenId}'s location to ${tokenInfo.location.x}/${tokenInfo.location.y}`)
+  tokenInfo.updateLocation(updateData);
 }
 
-Hooks.on("createCombatant", (combat, info, something, someId) => {
-  const token = canvasTokensGet(info.tokenId ?? combat.token.id);
+Hooks.on("createCombatant", (combatant, options, someId) => {
+  const token = canvasTokensGet(combatant.token.id);
   updateMeasureFrom(token);
   globalThis.movementPlanner.instance.fullRefresh();
 });
 
-Hooks.on("updateCombat", (combat, something, diff, someOtherId) => {
-  if (diff?.pf2e?.endTurn) {
-    const token = canvasTokensGet(diff.pf2e.endTurn)
+Hooks.on("deleteCombatant", (combatant, options, someId) => {
+  const token = canvasTokensGet(combatant.token.id);
+  updateMeasureFrom(token);
+  globalThis.movementPlanner.instance.fullRefresh();
+});
+
+
+Hooks.on("updateCombat", (combat, turnInfo, diff, someId) => {
+  if (combat?.previous?.tokenId) {
+    const token = canvasTokensGet(combat.previous.tokenId);
     updateMeasureFrom(token);
   }
   globalThis.movementPlanner.instance.fullRefresh();
 });
 
-Hooks.on("updateToken", (scene, token, foo, bar) => {
-  const tokenId = token.id ?? token._id;
-  const realToken = canvasTokensGet(tokenId); // Get the
-  //console.log(`updateToken: ${tokenId} moved to ${token.x}/${token.y}`);
-  updateLocation(token);
+Hooks.on("updateToken", (tokenDocument, updateData, options, someId) => {
+  const tokenId = tokenDocument.id;
+  const realToken = canvasTokensGet(tokenId); // Get the real token
+  updateLocation(realToken, updateData);
   if (!realToken.inCombat) {
-    updateMeasureFrom(token);
+    updateMeasureFrom(realToken, updateData);
   }
   globalThis.movementPlanner.instance.fullRefresh();
 });
-
-// Hooks.on("deleteCombatant", (combat, tokenInfo, something, someId) => {
-//   console.log(`Deleting ${tokenInfo.tokenId} from combat`);
-// });
-
-
