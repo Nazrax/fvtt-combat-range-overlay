@@ -54,6 +54,7 @@ export class MovementPlanner {
   constructor() {
     this.overlays = {};
     this.hookIDs = {};
+    this.newTarget = false;
   }
 
   // Use Dijkstra's shortest path algorithm
@@ -276,6 +277,7 @@ export class MovementPlanner {
 
   targetTokenHook() {
     console.log("HOOK: Target Token");
+    this.newTarget = true;
     this.fullRefresh();
   }
 
@@ -385,9 +387,13 @@ export class MovementPlanner {
   drawCosts(movementCostMap, targetRangeMap) {
     const rangeMap = buildRangeMap(targetRangeMap);
     const idealTileMap = calculateIdealTileMap(movementCostMap, targetRangeMap, rangeMap);
-    if (targetRangeMap.size > 0 && idealTileMap.size === 0) {
-      ui.notifications.warn("No tiles are within movement range AND attack range")
-      return;
+    let showOnlyTargetPath = targetRangeMap.size > 0;
+    if (showOnlyTargetPath && idealTileMap.size === 0) {
+      if (this.newTarget) {
+        this.newTarget = false;
+        ui.notifications.warn(game.i18n.localize("movement-planner.no-good-tiles"));
+        showOnlyTargetPath = false;
+      }
     }
 
     const tilesMovedPerAction = TokenInfo.current().speed / FEET_PER_TILE;
