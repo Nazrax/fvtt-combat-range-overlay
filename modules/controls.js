@@ -7,7 +7,7 @@ const MOVEMENT_PLANNER_BUTTON = "movementPlannerButton";
 
 async function _submitDialog(i, html) {
   console.log("_submitDialog", i, html);
-  await TokenInfo.current().setWeaponRange(i);
+  await TokenInfo.current.setWeaponRange(i);
 }
 
 async function _movementPlannerClick(toggled, controls) {
@@ -33,7 +33,7 @@ async function _movementPlannerClick(toggled, controls) {
     if (!token) {
       ui.notifications.warn("Can't reset token measureFrom without a selected token");
     } else {
-      TokenInfo.current().updateMeasureFrom();
+      TokenInfo.current.updateMeasureFrom();
       globalThis.movementPlanner.instance.fullRefresh();
     }
   } else {

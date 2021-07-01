@@ -60,7 +60,7 @@ export class MovementPlanner {
   // Use Dijkstra's shortest path algorithm
   calculateMovementCosts() {
     // TODO Fix caching
-    const tilesPerAction = TokenInfo.current().speed / FEET_PER_TILE;
+    const tilesPerAction = TokenInfo.current.speed / FEET_PER_TILE;
     const maxTiles = tilesPerAction * actionsToShow;
 
     const currentToken = getCurrentToken();
@@ -134,7 +134,7 @@ export class MovementPlanner {
 
   calculateTargetRangeMap() {
     const targetMap = new Map();
-    const weaponRangeInTiles = TokenInfo.current().weaponRange / FEET_PER_TILE;
+    const weaponRangeInTiles = TokenInfo.current.weaponRange / FEET_PER_TILE;
 
     for (const targetToken of game.user.targets) {
       targetMap.set(targetToken.id, calculateTilesInRange(weaponRangeInTiles, targetToken));
@@ -158,9 +158,9 @@ export class MovementPlanner {
       return;
     }
 
-    const tilesMovedPerAction = TokenInfo.current().speed / FEET_PER_TILE;
-    const weaponRangeInTiles = TokenInfo.current().weaponRange / FEET_PER_TILE;
-    const myDisposition = getCombatantTokenDisposition(getCurrentToken());
+    const tilesMovedPerAction = TokenInfo.current.speed / FEET_PER_TILE;
+    const weaponRangeInTiles = TokenInfo.current.weaponRange / FEET_PER_TILE;
+    const myDisposition = getCombatantTokenDisposition(currentToken);
 
     for (const combatant of game.combat.combatants) {
       const combatantToken = getCombatantToken(combatant);
@@ -396,7 +396,7 @@ export class MovementPlanner {
       }
     }
 
-    const tilesMovedPerAction = TokenInfo.current().speed / FEET_PER_TILE;
+    const tilesMovedPerAction = TokenInfo.current.speed / FEET_PER_TILE;
     this.overlays.distanceTexts = [];
     this.overlays.pathOverlay.lineStyle(pathLineWidth, pathLineColor);
 

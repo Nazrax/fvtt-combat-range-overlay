@@ -31,7 +31,7 @@ export class TokenInfo {
     this.measureFrom = location;
   }
 
-  static current() {
+  static get current() {
     return TokenInfo.getById(getCurrentToken().id);
   }
 
