@@ -15,6 +15,10 @@ class Keyboard {
         this._hooks.set(key, hookList);
     }
 
+    clearHooks() {
+        this._hookList = new Map();
+    }
+
     isDown(key) {
         return this._keyStates.has(key) && this._keyStates.get(key) === states.DOWN;
     }
@@ -23,7 +27,6 @@ class Keyboard {
         this._keyStates.set(event.key, states.DOWN);
         if (this._hooks.has(event.key)) {
             for (const func of this._hooks.get(event.key)) {
-                console.log("Calling keydownfunc", func);
                 func(event, states.DOWN);
             }
         }

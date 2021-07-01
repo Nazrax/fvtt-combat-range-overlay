@@ -15,6 +15,10 @@ class Mouse {
       this._hooks.push(func);
   }
 
+  clearHooks() {
+    this._hooks = []
+  }
+
   isLeftDrag() {
     return this._leftDrag;
   }
