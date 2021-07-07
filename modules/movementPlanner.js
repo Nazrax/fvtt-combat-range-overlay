@@ -173,17 +173,18 @@ export class MovementPlanner {
           const colorIndex = Math.min(Math.ceil(Math.floor(bestCost + FUDGE) / tilesMovedPerAction), colorByActions.length-1);
           let color = colorByActions[colorIndex];
 
-          const combatantTokenInfo = TokenInfo.getById(combatantToken.id);
-          this.overlays.potentialTargetOverlay.lineStyle(potentialTargetLineWidth, color)
-          this.overlays.potentialTargetOverlay.drawCircle(
-            combatantTokenInfo.location.x + combatantToken.hitArea.width/2,
-            combatantTokenInfo.location.y + combatantToken.hitArea.height/2,
+          const tokenOverlay = new PIXI.Graphics();
+          tokenOverlay.lineStyle(potentialTargetLineWidth, color)
+          tokenOverlay.drawCircle(
+            combatantToken.hitArea.width/2,
+            combatantToken.hitArea.height/2,
             Math.pow(Math.pow(combatantToken.hitArea.width/2, 2) + Math.pow(combatantToken.hitArea.height/2, 2), .5)
           );
+          combatantToken.addChild(tokenOverlay);
+          this.overlays.tokenOverlays.push(tokenOverlay);
         }
       }
     }
-    canvas.drawings.addChild(this.overlays.potentialTargetOverlay);
   }
 
   drawAll() {
@@ -290,12 +291,14 @@ export class MovementPlanner {
   clearAll() {
     this.overlays.distanceTexts?.forEach(t => {safeDestroy(t)});
     this.overlays.turnOrderTexts?.forEach(t => {safeDestroy(t)});
+    this.overlays.tokenOverlays?.forEach(o => {safeDestroy(o)});
     safeDestroy(this.overlays.distanceOverlay);
     safeDestroy(this.overlays.pathOverlay);
     safeDestroy(this.overlays.potentialTargetOverlay);
     safeDestroy(this.overlays.wallsOverlay);
 
     this.overlays.distanceTexts = [];
+    this.overlays.tokenOverlays = [];
     this.overlays.distanceOverlay = undefined;
     this.overlays.pathOverlay = undefined;
     this.overlays.turnOrderTexts = [];
@@ -315,6 +318,7 @@ export class MovementPlanner {
   initializePersistentVariables() {
     this.overlays.distanceTexts = [];
     this.overlays.turnOrderTexts = [];
+    this.overlays.tokenOverlays = [];
 
     this.overlays.distanceOverlay = new PIXI.Graphics();
     this.overlays.pathOverlay = new PIXI.Graphics();
@@ -357,12 +361,9 @@ export class MovementPlanner {
 
           if (turnOrder > 0 && combatantToken.visible) {
             const text = new PIXI.Text(turnOrder, turnOrderStyle);
-            //text.position.x = combatantToken.x + combatantToken.hitArea.width / 2 - text.width / 2;
-            //text.position.y = combatantToken.y + combatantToken.hitArea.height / 2 - text.height / 2;
-            const ti = TokenInfo.getById(combatantTokenId);
-            text.position.x = ti.location.x + combatantToken.hitArea.width - text.width - TEXT_MARGIN;
-            text.position.y = ti.location.y + combatantToken.hitArea.height - text.height - TEXT_MARGIN;
-            canvas.tokens.addChild(text);
+            text.position.x = combatantToken.hitArea.width - text.width - TEXT_MARGIN;
+            text.position.y = combatantToken.hitArea.height - text.height - TEXT_MARGIN;
+            combatantToken.addChild(text);
             this.overlays.turnOrderTexts.push(text);
           }
           turnOrder++
@@ -484,7 +485,8 @@ function calculateIdealTileMap(movementTileMap, targetMap, rangeMap) {
 }
 
 function calculateTilesInRange(rangeInTiles, targetToken) {
-  const targetTile = GridTile.fromPixels(targetToken.x, targetToken.y);
+  const tokenInfo = TokenInfo.getById(targetToken.id);
+  const targetTile = GridTile.fromPixels(tokenInfo.location.x, tokenInfo.location.y);
   const tileSet = new Set();
   const targetGridX = targetTile.gx;
   const targetGridY = targetTile.gy;
