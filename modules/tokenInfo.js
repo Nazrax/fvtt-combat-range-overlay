@@ -5,6 +5,10 @@ import {debugLog} from "./debug.js"
 export class TokenInfo {
   static _tokenInfoMap = new Map();
 
+  static resetMap() {
+    TokenInfo._tokenInfoMap = new Map();
+  }
+
   constructor(tokenId) {
     this.tokenId = tokenId;
     this.token = canvasTokensGet(this.tokenId);
@@ -45,15 +49,30 @@ export class TokenInfo {
   }
 
   get weaponRange() {
+    // Somehow unlinked tokens get their own copies of actors (they even share IDs) but which have their own flags
+    const baseActor = game.actors.get(this.token.actor.id);
+
     // Idea is being stupid - this isn't actually deprecated
     // noinspection JSDeprecatedSymbols
-    return this.token.document.getFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE) ?? DEFAULT_WEAPON_RANGE;
+    return this.token.document.getFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE) ??
+      baseActor.getFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE) ??
+      DEFAULT_WEAPON_RANGE;
   }
 
-  async setWeaponRange(range) {
-    // Idea is being stupid - this isn't actually deprecated
-    // noinspection JSDeprecatedSymbols
-    await this.token.document.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, range);
+  async setWeaponRange(range, updateActor=false) {
+    // Somehow unlinked tokens get their own copies of actors (they even share IDs) but which have their own flags
+    const baseActor = game.actors.get(this.token.actor.id);
+
+    // Idea is being stupid - these isn't actually deprecated
+    if (updateActor) {
+      // noinspection JSDeprecatedSymbols
+      await this.token.document.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, undefined);
+      // noinspection JSDeprecatedSymbols
+      await baseActor.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, range);
+    } else {
+      // noinspection JSDeprecatedSymbols
+      await this.token.document.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, range);
+    }
   }
 
   get speed() {

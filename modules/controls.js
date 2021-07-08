@@ -3,13 +3,32 @@ import {keyboard} from "./keyboard.js";
 import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
 import {MODULE_ID} from "./constants.js"
+import {debugLog} from "./debug.js"
 
 const TOGGLE_BUTTON = "combatRangeOverlayButton";
 
 // noinspection JSUnusedLocalSymbols
 async function _submitDialog(i, html) {
-  // console.log("_submitDialog", i, html);
-  await TokenInfo.current.setWeaponRange(i);
+  debugLog("_submitDialog", i, html);
+  const updateActor = html.find("[name=update-actor]")[0]?.checked;
+  await TokenInfo.current.setWeaponRange(i, updateActor);
+}
+
+function _showRangeDialog() {
+  const buttons = Object.fromEntries(getWeaponRanges().map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
+
+  const content = [];
+  if (game.user.isGM) {
+    content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.update-actor-checkbox`)} <input name="update-actor" type="checkbox"/></td></tr></table></p>`);
+  }
+  content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.weapon-range-header`)}</p>`);
+
+  let d = new Dialog({
+    title: game.i18n.localize(`${MODULE_ID}.quick-settings.title`),
+    content: content.join("\n"),
+    buttons
+  }, {id: "croQuickSettingsDialog"});
+  d.render(true);
 }
 
 async function _toggleButtonClick(toggled, controls) {
@@ -23,14 +42,7 @@ async function _toggleButtonClick(toggled, controls) {
       // Assume we want to activate if the user is opening the dialog
       isActive = true;
 
-      let buttons = Object.fromEntries(getWeaponRanges().map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
-
-      let d = new Dialog({
-        title: game.i18n.localize(`${MODULE_ID}.quick-settings.title`),
-        content: `<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.weapon-range-header`)}:</p>`,
-        buttons
-      }, {id: "croQuickSettingsDialog"});
-      d.render(true);
+      _showRangeDialog();
     }
   } else if (keyboard.isDown("Control")) { // Reset measureFrom
     let token = getCurrentToken();

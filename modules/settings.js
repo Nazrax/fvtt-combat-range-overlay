@@ -23,7 +23,8 @@ const settingNames = {
   SHOW_WALLS: 'show-walls',
   MOVEMENT_ALPHA: 'movement-alpha',
   RANGES: 'ranges',
-  DIAGONALS: 'diagonals'
+  DIAGONALS: 'diagonals',
+  SHOW_WEAPON_RANGE: "show-weapon-range"
 };
 const hiddenSettings = [settingNames.IS_ACTIVE];
 const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS];
@@ -163,4 +164,8 @@ export function isHotkeys() {
 
 export function getRanges() {
   return game.settings.get(MODULE_ID, settingNames.RANGES);
+}
+
+export function isShowWeaponRange() {
+  return game.settings.get(MODULE_ID, settingNames.SHOW_WEAPON_RANGE);
 }
