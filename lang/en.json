@@ -35,12 +35,15 @@
     },
     "quick-settings": {
       "title": "Combat Range Overlay Quick Settings",
-      "weapon-range-header": "Weapon Range"
+      "weapon-range-header": "Weapon Range:",
+      "update-actor-checkbox": "Update actor instead of token?"
     },
     "controls": {
       "cant-open-no-selected-token": "Can't open quick settings without a selected token",
       "cant-reset-no-token": "Can't reset token position without a selected token"
     },
-    "activated-not-visible": "The Combat Range Overlay is now activated but is not yet visible (see Settings for details)"
+    "activated-not-visible": "The Combat Range Overlay is now activated but is not yet visible (see Settings for details)",
+    "show-weapon-range": "Show weapon range?",
+    "show-weapon-range-hint": "Annotate selected token with current weapon range"
   }
 }

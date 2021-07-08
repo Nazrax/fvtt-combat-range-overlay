@@ -31,6 +31,8 @@ const potentialTargetLineWidth = 3;
 
 const TEXT_MARGIN = 2;
 
+const BASE_GRID_SIZE = 70; // For scaling fonts
+
 // Fonts
 const movementCostStyle = {
   fontFamily: 'Arial',
@@ -46,6 +48,14 @@ const turnOrderStyle = {
   fill: 0xffffff, // white
   stroke: 0x000000, // black
   strokeThickness: 5
+};
+
+const weaponRangeStyle = {
+  fontFamily: 'Arial',
+  fontSize: 20,
+  fill: 0xffffff, // white
+  stroke: 0x000000, // black
+  strokeThickness: 4
 };
 
 function getDiagonalDelta() {
@@ -234,6 +244,10 @@ export class Overlay {
       }
     }
 
+    if (Settings.isShowWeaponRange()) {
+      this.drawWeaponRange();
+    }
+
     if (Settings.isShowWalls()) {
       this.drawWalls();
     }
@@ -281,7 +295,7 @@ export class Overlay {
         showOverlay = true;
       }
     }
-    
+
     if (showOverlay) {
       this.drawAll();
     } else if (this.justActivated) {
@@ -304,13 +318,19 @@ export class Overlay {
   }
 
   canvasInitHook() {
-    globalThis.combatRangeOverlay.instance.clearAll();
+    this.clearAll();
+    TokenInfo.resetMap();
+  }
+
+  updateWallHook() {
+    this.fullRefresh();
   }
 
   registerHooks() {
     this.hookIDs.renderApplication = Hooks.on("renderApplication", () => this.renderApplicationHook());
     this.hookIDs.targetToken = Hooks.on("targetToken", () => this.targetTokenHook());
     this.hookIDs.canvasInit = Hooks.on("canvasInit", () => this.canvasInitHook());
+    this.hookIDs.updateWall = Hooks.on("updateWall", () => this.updateWallHook());
   }
 
   unregisterHooks() {
@@ -360,7 +380,29 @@ export class Overlay {
     this.overlays.wallsOverlay = new PIXI.Graphics();
   }
 
+  drawWeaponRange() {
+    debugLog("drawWeaponRange");
+    const currentToken = getCurrentToken();
+    if (!currentToken.inCombat) {
+      return;
+    }
+
+    const range = TokenInfo.current.weaponRange;
+
+    const style = Object.assign({}, weaponRangeStyle);
+    style.fontSize = style.fontSize * (canvasGridSize() / BASE_GRID_SIZE);
+
+    const text = new PIXI.Text(`» ${range}`, style);
+    text.position.x = currentToken.hitArea.width - text.width - TEXT_MARGIN;
+    text.position.y = currentToken.hitArea.height - text.height - TEXT_MARGIN;
+    currentToken.addChild(text);
+    this.overlays.turnOrderTexts.push(text);
+  }
+
   drawTurnOrder() {
+    const style = Object.assign({}, turnOrderStyle);
+    style.fontSize = style.fontSize * (canvasGridSize() / BASE_GRID_SIZE);
+
     const currentTokenId = getCurrentToken().id;
     for (const combat of game.combats) {
       const currentCombatant = combat.combatants.find(c => c.token.id === currentTokenId);
@@ -394,7 +436,7 @@ export class Overlay {
           const combatantToken = canvasTokensGet(combatantTokenId);
 
           if (turnOrder > 0 && combatantToken.visible) {
-            const text = new PIXI.Text(turnOrder, turnOrderStyle);
+            const text = new PIXI.Text(turnOrder, style);
             text.position.x = combatantToken.hitArea.width - text.width - TEXT_MARGIN;
             text.position.y = combatantToken.hitArea.height - text.height - TEXT_MARGIN;
             combatantToken.addChild(text);
@@ -436,8 +478,11 @@ export class Overlay {
       }
       if (drawTile) {
         if (globalThis.combatRangeOverlay.showNumericMovementCost) {
+          const style = Object.assign({}, movementCostStyle);
+          style.fontSize = style.fontSize * (canvasGridSize() / BASE_GRID_SIZE);
+
           const label = globalThis.combatRangeOverlay.roundNumericMovementCost ? diagonalDistance(tile.distance) : tile.distance;
-          const text = new PIXI.Text(label, movementCostStyle);
+          const text = new PIXI.Text(label, style);
           const pt = tile.pt;
           text.position.x = pt.x;
           text.position.y = pt.y;
