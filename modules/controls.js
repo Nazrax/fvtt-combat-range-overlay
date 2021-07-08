@@ -2,8 +2,9 @@ import {getCurrentToken, getWeaponRanges, uiNotificationsWarn} from "./utility.j
 import {keyboard} from "./keyboard.js";
 import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
+import {MODULE_ID} from "./constants.js"
 
-const MOVEMENT_PLANNER_BUTTON = "movementPlannerButton";
+const TOGGLE_BUTTON = "combatRangeOverlayButton";
 
 // noinspection JSUnusedLocalSymbols
 async function _submitDialog(i, html) {
@@ -11,13 +12,13 @@ async function _submitDialog(i, html) {
   await TokenInfo.current.setWeaponRange(i);
 }
 
-async function _movementPlannerClick(toggled, controls) {
+async function _toggleButtonClick(toggled, controls) {
   let isActive = Settings.isActive()
 
   if (keyboard.isDown("Shift")) {  // Pop quick settings
     let token = getCurrentToken();
     if (!token) {
-      uiNotificationsWarn("Can't open quick settings without a selected token");
+      uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.controls.cant-open-no-selected-token`));
     } else {
       // Assume we want to activate if the user is opening the dialog
       isActive = true;
@@ -25,44 +26,47 @@ async function _movementPlannerClick(toggled, controls) {
       let buttons = Object.fromEntries(getWeaponRanges().map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
 
       let d = new Dialog({
-        title: "Movement Planner Quick Settings",
-        content: "<p>Weapon Range:</p>",
+        title: game.i18n.localize(`${MODULE_ID}.quick-settings.title`),
+        content: `<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.weapon-range-header`)}:</p>`,
         buttons
-      }, {id: "movementPlannerDialog"});
+      }, {id: "croQuickSettingsDialog"});
       d.render(true);
     }
   } else if (keyboard.isDown("Control")) { // Reset measureFrom
     let token = getCurrentToken();
     if (!token) {
-      uiNotificationsWarn("Can't reset token measureFrom without a selected token");
+      uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.controls.cant-reset-no-token`));
     } else {
       TokenInfo.current.updateMeasureFrom();
-      globalThis.movementPlanner.instance.fullRefresh();
+      globalThis.combatRangeOverlay.instance.fullRefresh();
     }
   } else {
     isActive = toggled;
+    if (toggled) {
+      globalThis.combatRangeOverlay.instance.justActivated = true;
+    }
   }
 
   // Ensure button matches active state
   // We _must_ set .active _before_ using await or the button will be drawn and we'll be too late
-  controls.find(group => group.name === "token").tools.find(t => t.name === MOVEMENT_PLANNER_BUTTON).active = isActive;
+  controls.find(group => group.name === "token").tools.find(t => t.name === TOGGLE_BUTTON).active = isActive;
   await Settings.setActive(isActive);
 }
 
-let movementPlannerButton;
+let toggleButton;
 Hooks.on('getSceneControlButtons', (controls) => {
-  if (!movementPlannerButton) {
-    movementPlannerButton = {
-      name: MOVEMENT_PLANNER_BUTTON,
-      title: "movement-planner.controlButton",
+  if (!toggleButton) {
+    toggleButton = {
+      name: TOGGLE_BUTTON,
+      title: `${MODULE_ID}.controlButton`,
       icon: "fas fa-people-arrows",
       toggle: true,
       active: Settings.isActive(),
-      onClick: (toggled) => _movementPlannerClick(toggled, controls),
+      onClick: (toggled) => _toggleButtonClick(toggled, controls),
       visible: true,  // TODO: Figure out how to disable this from Settings
     }
   }
 
   const tokenControls = controls.find(group => group.name === "token").tools
-  tokenControls.push(movementPlannerButton);
+  tokenControls.push(toggleButton);
 });

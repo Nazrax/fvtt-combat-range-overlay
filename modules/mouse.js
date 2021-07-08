@@ -1,4 +1,4 @@
-import {MODULE_NAME} from "./constants.js"
+import {MODULE_ID} from "./constants.js"
 import {debugLog} from "./debug.js"
 
 /*
@@ -57,14 +57,14 @@ export const mouse = new Mouse();
 
 Hooks.once("libWrapper.Ready", () => {
   // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-  libWrapper.ignore_conflicts(MODULE_NAME, ['drag-ruler', 'enhanced-terrain-layer'], ['Token.prototype._onDragLeftStart', 'Token.prototype._onDragLeftDrop', 'Token.prototype._onDragLeftCancel'])
+  libWrapper.ignore_conflicts(MODULE_ID, ['drag-ruler', 'enhanced-terrain-layer'], ['Token.prototype._onDragLeftStart', 'Token.prototype._onDragLeftDrop', 'Token.prototype._onDragLeftCancel'])
 
   // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-  libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftStart', mouse._dragStartWrapper.bind(mouse), 'WRAPPER');
+  libWrapper.register(MODULE_ID, 'Token.prototype._onDragLeftStart', mouse._dragStartWrapper.bind(mouse), 'WRAPPER');
 
   // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-  libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftDrop', mouse._dragDropWrapper.bind(mouse), 'WRAPPER');
+  libWrapper.register(MODULE_ID, 'Token.prototype._onDragLeftDrop', mouse._dragDropWrapper.bind(mouse), 'WRAPPER');
 
   // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-  libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftCancel', mouse._dragCancelWrapper.bind(mouse), 'WRAPPER');
+  libWrapper.register(MODULE_ID, 'Token.prototype._onDragLeftCancel', mouse._dragCancelWrapper.bind(mouse), 'WRAPPER');
 })

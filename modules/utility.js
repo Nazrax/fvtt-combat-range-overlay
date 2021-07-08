@@ -79,3 +79,8 @@ export function uiNotificationsWarn(msg) {
   // noinspection JSUnresolvedFunction
   ui.notifications.warn(msg);
 }
+
+export function uiNotificationsInfo(msg) {
+  // noinspection JSUnresolvedFunction
+  ui.notifications.info(msg);
+}

@@ -1,4 +1,4 @@
-export const MODULE_NAME = "movement-planner";
+export const MODULE_ID = "combat-range-overlay";
 
 export const DEFAULT_WEAPON_RANGE = 5;
 export const DEFAULT_WEAPON_RANGES = "5,10,30,60,120";

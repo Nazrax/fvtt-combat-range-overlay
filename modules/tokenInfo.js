@@ -1,4 +1,4 @@
-import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_NAME} from "./constants.js"
+import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
 import {canvasTokensGet, getCurrentToken} from "./utility.js"
 import {debugLog} from "./debug.js"
 
@@ -47,13 +47,13 @@ export class TokenInfo {
   get weaponRange() {
     // Idea is being stupid - this isn't actually deprecated
     // noinspection JSDeprecatedSymbols
-    return this.token.document.getFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE) ?? DEFAULT_WEAPON_RANGE;
+    return this.token.document.getFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE) ?? DEFAULT_WEAPON_RANGE;
   }
 
   async setWeaponRange(range) {
     // Idea is being stupid - this isn't actually deprecated
     // noinspection JSDeprecatedSymbols
-    await this.token.document.setFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE, range);
+    await this.token.document.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, range);
   }
 
   get speed() {
@@ -90,14 +90,14 @@ function updateLocation(token, updateData) {
 Hooks.on("createCombatant", (combatant, options, someId) => {
   const token = canvasTokensGet(combatant.token.id);
   updateMeasureFrom(token);
-  globalThis.movementPlanner.instance.fullRefresh();
+  globalThis.combatRangeOverlay.instance.fullRefresh();
 });
 
 // noinspection JSUnusedLocalSymbols
 Hooks.on("deleteCombatant", (combatant, options, someId) => {
   const token = canvasTokensGet(combatant.token.id);
   updateMeasureFrom(token);
-  globalThis.movementPlanner.instance.fullRefresh();
+  globalThis.combatRangeOverlay.instance.fullRefresh();
 });
 
 
@@ -107,7 +107,7 @@ Hooks.on("updateCombat", (combat, turnInfo, diff, someId) => {
     const token = canvasTokensGet(combat.previous.tokenId);
     updateMeasureFrom(token);
   }
-  globalThis.movementPlanner.instance.fullRefresh();
+  globalThis.combatRangeOverlay.instance.fullRefresh();
 });
 
 // noinspection JSUnusedLocalSymbols
@@ -118,5 +118,5 @@ Hooks.on("updateToken", (tokenDocument, updateData, options, someId) => {
   if (!realToken.inCombat) {
     updateMeasureFrom(realToken, updateData);
   }
-  globalThis.movementPlanner.instance.fullRefresh();
+  globalThis.combatRangeOverlay.instance.fullRefresh();
 });

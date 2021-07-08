@@ -5,7 +5,8 @@ import './debug.js';
 import './settings.js';
 import './controls.js';
 import './tokenInfo.js';
-import {MovementPlanner} from "./movementPlanner.js"
+import {Overlay} from "./overlay.js"
+import {debugLog} from "./debug.js"
 
 /* Tasks
  * Basic functionality:
@@ -18,8 +19,8 @@ import {MovementPlanner} from "./movementPlanner.js"
  */
 
 Hooks.on("ready", function() {
-  const instance = new MovementPlanner()
-  globalThis.movementPlanner = {
+  const instance = new Overlay()
+  globalThis.combatRangeOverlay = {
     instance,
     showNumericMovementCost: false,
     showPathLines: false,
@@ -32,7 +33,7 @@ Hooks.on("ready", function() {
 
 Hooks.on("hoverToken", (token, hovering) =>{
   if (hovering) {
-    console.log("Hovering over", token.id, token.x, token.y);
+    debugLog("Hovering over", token.id, token.x, token.y);
   }
 })
 
