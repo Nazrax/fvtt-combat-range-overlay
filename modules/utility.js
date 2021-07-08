@@ -1,7 +1,5 @@
-import {MODULE_NAME} from "./constants.js";
-import {FLAG_NAMES} from "./constants.js"
-
-const DEFAULT_WEAPON_RANGE = 5;
+import * as Settings from "./settings.js";
+import {DEFAULT_WEAPON_RANGES} from "./constants.js"
 
 export function getCurrentToken() {
   if (canvasTokensControlled().length > 0) {
@@ -17,7 +15,19 @@ export function getCurrentToken() {
 }
 
 export function getWeaponRanges() {
-  return [5, 10, 30, 60, 120]; // TODO Actually figure this out by scanning weapons and abilities
+  const rangeStrings = Settings.getRanges().split(",");
+  const ranges = []
+  for (const rangeString of rangeStrings) {
+    const range = parseInt(rangeString);
+    if (!isNaN(range)) {
+      ranges.push(range);
+    }
+  }
+  if (ranges.length) {
+    return ranges;
+  } else {
+    return DEFAULT_WEAPON_RANGES.split(",").map(r => parseInt(r));
+  }
 }
 
 export function safeDestroy(thing) {
@@ -60,8 +70,12 @@ export function canvasTokensGet(tokenId) {
   return canvas.tokens.get(tokenId);
 }
 
-function canvasTokensControlled() {
+export function canvasTokensControlled() {
   // noinspection JSUnresolvedVariable
   return canvas.tokens.controlled;
 }
 
+export function uiNotificationsWarn(msg) {
+  // noinspection JSUnresolvedFunction
+  ui.notifications.warn(msg);
+}

@@ -14,13 +14,24 @@
     "show-walls-hint": "Draw an overlay on top of all walls",
     "movement-alpha": "Overlay opacity",
     "movement-alpha-hint": "Lower values are more transparent",
-    "visibility": "Overlay visibility",
-    "visibility-hint": "When should the overlay be visible?",
+    "ic_visibility": "Visible in combat?",
+    "ic_visibility-hint": "When should the overlay be visible during combat?",
+    "ooc_visibility": "Visible out of combat?",
+    "ooc_visibility-hint": "When should the overlay be visible out of combat?",
     "visibilities": {
       "always": "Always",
-      "combat": "During combat",
-      "combat-and-hotkeys": "During combat or with ALT or token drag",
-      "hotkeys": "Only with ALT or token drag"
+      "hotkeys": "Only with ALT or token drag",
+      "never": "Never"
+    },
+    "ranges": "Available weapon ranges",
+    "ranges-hint": "Comma-separated list of ranges to choose from in the quick settings dialog",
+    "diagonals": {
+      "name": "Diagonals distance",
+      "hint": "How to calculate diagonal movement distance",
+      "fiveTenFive": "Five / Ten / Five / ...",
+      "tenFiveTen": "Ten / Five / Ten / ...",
+      "five": "Five / Five / ...",
+      "ten": "Ten / Ten / ..."
     }
   }
 }

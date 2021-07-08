@@ -1,5 +1,6 @@
 import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_NAME} from "./constants.js"
 import {canvasTokensGet, getCurrentToken} from "./utility.js"
+import {debugLog} from "./debug.js"
 
 export class TokenInfo {
   static _tokenInfoMap = new Map();
@@ -44,10 +45,14 @@ export class TokenInfo {
   }
 
   get weaponRange() {
+    // Idea is being stupid - this isn't actually deprecated
+    // noinspection JSDeprecatedSymbols
     return this.token.document.getFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE) ?? DEFAULT_WEAPON_RANGE;
   }
 
   async setWeaponRange(range) {
+    // Idea is being stupid - this isn't actually deprecated
+    // noinspection JSDeprecatedSymbols
     await this.token.document.setFlag(MODULE_NAME, FLAG_NAMES.WEAPON_RANGE, range);
   }
 
@@ -81,12 +86,14 @@ function updateLocation(token, updateData) {
   tokenInfo.updateLocation(updateData);
 }
 
+// noinspection JSUnusedLocalSymbols
 Hooks.on("createCombatant", (combatant, options, someId) => {
   const token = canvasTokensGet(combatant.token.id);
   updateMeasureFrom(token);
   globalThis.movementPlanner.instance.fullRefresh();
 });
 
+// noinspection JSUnusedLocalSymbols
 Hooks.on("deleteCombatant", (combatant, options, someId) => {
   const token = canvasTokensGet(combatant.token.id);
   updateMeasureFrom(token);
@@ -94,6 +101,7 @@ Hooks.on("deleteCombatant", (combatant, options, someId) => {
 });
 
 
+// noinspection JSUnusedLocalSymbols
 Hooks.on("updateCombat", (combat, turnInfo, diff, someId) => {
   if (combat?.previous?.tokenId) {
     const token = canvasTokensGet(combat.previous.tokenId);
@@ -102,6 +110,7 @@ Hooks.on("updateCombat", (combat, turnInfo, diff, someId) => {
   globalThis.movementPlanner.instance.fullRefresh();
 });
 
+// noinspection JSUnusedLocalSymbols
 Hooks.on("updateToken", (tokenDocument, updateData, options, someId) => {
   const tokenId = tokenDocument.id;
   const realToken = canvasTokensGet(tokenId); // Get the real token
