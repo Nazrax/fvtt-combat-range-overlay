@@ -4,11 +4,11 @@ import {
   getCombatantToken,
   getCombatantTokenDisposition,
   getCurrentToken,
-  safeDestroy, uiNotificationsWarn
+  safeDestroy, uiNotificationsInfo, uiNotificationsWarn
 } from "./utility.js"
 
 import {GridTile} from "./gridTile.js";
-import {FEET_PER_TILE, FUDGE, MAX_DIST} from "./constants.js";
+import {FEET_PER_TILE, FUDGE, MAX_DIST, MODULE_ID} from "./constants.js"
 import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
 import {mouse} from "./mouse.js";
@@ -74,11 +74,12 @@ function diagonalDistance(rawDist) {
   }
 }
 
-export class MovementPlanner {
+export class Overlay {
   constructor() {
     this.overlays = {};
     this.hookIDs = {};
     this.newTarget = false;
+    this.justActivated = false;
   }
 
   // Use Dijkstra's shortest path algorithm
@@ -237,7 +238,8 @@ export class MovementPlanner {
       this.drawWalls();
     }
 
-    if (Settings.isShowDifficultTerrain()) {
+    // noinspection JSUnresolvedVariable
+    if (Settings.isShowDifficultTerrain() && canvas.terrain) {
       try {
         // noinspection JSUnresolvedVariable
         canvas.terrain.visible = true;
@@ -264,27 +266,28 @@ export class MovementPlanner {
       return;
     }
 
-    const currentToken = getCurrentToken();
-    if (!currentToken) {
-      return;
-    }
-
-    let hotkeys = false;
-    if (keyboard.isDown("Alt") || mouse.isLeftDrag()) {
-      hotkeys = true;
-    }
-
     let showOverlay = false;
-    const visibilitySetting = currentToken.inCombat ? Settings.getICVisibility() : Settings.getOOCVisibility();
-    if (visibilitySetting === Settings.overlayVisibility.ALWAYS) {
-      showOverlay = true;
-    } else if (visibilitySetting === Settings.overlayVisibility.HOTKEYS && hotkeys) {
-      showOverlay = true;
-    }
+    const currentToken = getCurrentToken();
+    if (currentToken) {
+      let hotkeys = false;
+      if (keyboard.isDown("Alt") || mouse.isLeftDrag()) {
+        hotkeys = true;
+      }
 
+      const visibilitySetting = currentToken.inCombat ? Settings.getICVisibility() : Settings.getOOCVisibility();
+      if (visibilitySetting === Settings.overlayVisibility.ALWAYS) {
+        showOverlay = true;
+      } else if (visibilitySetting === Settings.overlayVisibility.HOTKEYS && hotkeys) {
+        showOverlay = true;
+      }
+    }
+    
     if (showOverlay) {
       this.drawAll();
+    } else if (this.justActivated) {
+      uiNotificationsInfo(game.i18n.localize(`${MODULE_ID}.activated-not-visible`));
     }
+    this.justActivated = false;
   }
 
   // partialRefresh() {
@@ -301,7 +304,7 @@ export class MovementPlanner {
   }
 
   canvasInitHook() {
-    globalThis.movementPlanner.instance.clearAll();
+    globalThis.combatRangeOverlay.instance.clearAll();
   }
 
   registerHooks() {
@@ -410,7 +413,7 @@ export class MovementPlanner {
     if (showOnlyTargetPath && idealTileMap.size === 0) {
       if (this.newTarget) {
         this.newTarget = false;
-        uiNotificationsWarn(game.i18n.localize("movement-planner.no-good-tiles"));
+        uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.no-good-tiles`));
         showOnlyTargetPath = false;
       }
     }
@@ -432,8 +435,8 @@ export class MovementPlanner {
         }
       }
       if (drawTile) {
-        if (globalThis.movementPlanner.showNumericMovementCost) {
-          const label = globalThis.movementPlanner.roundNumericMovementCost ? diagonalDistance(tile.distance) : tile.distance;
+        if (globalThis.combatRangeOverlay.showNumericMovementCost) {
+          const label = globalThis.combatRangeOverlay.roundNumericMovementCost ? diagonalDistance(tile.distance) : tile.distance;
           const text = new PIXI.Text(label, movementCostStyle);
           const pt = tile.pt;
           text.position.x = pt.x;
@@ -441,7 +444,7 @@ export class MovementPlanner {
           this.overlays.distanceTexts.push(text);
         }
 
-        if (globalThis.movementPlanner.showPathLines) {
+        if (globalThis.combatRangeOverlay.showPathLines) {
           let tileCenter = tile.centerPt;
           if (tile.upstreams !== undefined) {
             for (const upstream of tile.upstreams) {

@@ -1,7 +1,7 @@
 {
-  "movement-planner": {
+  "combat-range-overlay": {
     "no-good-tiles": "No tiles are within movement range AND attack range",
-    "controlButton": "Show movement overlay",
+    "controlButton": "Toggle combat range overlay",
     "is-active": "Active?",
     "is-active-hint": "Is the overlay active?",
     "show-turn-order": "Draw turn order?",
@@ -32,6 +32,15 @@
       "tenFiveTen": "Ten / Five / Ten / ...",
       "five": "Five / Five / ...",
       "ten": "Ten / Ten / ..."
-    }
+    },
+    "quick-settings": {
+      "title": "Combat Range Overlay Quick Settings",
+      "weapon-range-header": "Weapon Range"
+    },
+    "controls": {
+      "cant-open-no-selected-token": "Can't open quick settings without a selected token",
+      "cant-reset-no-token": "Can't reset token position without a selected token"
+    },
+    "activated-not-visible": "The Combat Range Overlay is now activated but is not yet visible (see Settings for details)"
   }
 }

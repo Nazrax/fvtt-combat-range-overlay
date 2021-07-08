@@ -1,11 +1,11 @@
 {
- "name": "movement-planner",
- "title": "Movement Planner",
- "description": "Show an overlay to help quickly decide where and how to move",
+ "name": "combat-range-overlay",
+ "title": "Combat Range Overlay",
+ "description": "Show an overlay to help quickly decide where and how to move and who to attack",
  "author": "Adrian Abraham",
- "version": "0.0.1",
- "minimumCoreVersion": "0.7.9",
- "compatibleCoreVersion": "0.7.9",
+ "version": "replace me",
+ "minimumCoreVersion": "0.8.6",
+ "compatibleCoreVersion": "0.8.8",
  "languages": [
   {
    "lang": "en",

@@ -1,17 +1,16 @@
-import {MODULE_NAME} from "./constants.js"
+import {MODULE_ID} from "./constants.js"
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
-  console.log("Registering debug flag", MODULE_NAME);
-  registerPackageDebugFlag(MODULE_NAME);
+  registerPackageDebugFlag(MODULE_ID);
 });
 
 export function isDebugging() {
   // noinspection JSUnresolvedFunction,JSUnresolvedVariable
-  return game.modules.get('_dev-mode')?.api?.getPackageDebugValue(MODULE_NAME);
+  return game.modules.get('_dev-mode')?.api?.getPackageDebugValue(MODULE_ID);
 }
 
 export function consoleLog(...args) {
-  console.log(MODULE_NAME, '|', ...args);
+  console.log(MODULE_ID, '|', ...args);
 }
 
 export function debugLog(...args) {

@@ -1,4 +1,4 @@
-import {DEFAULT_WEAPON_RANGES, MODULE_NAME} from "./constants.js"
+import {DEFAULT_WEAPON_RANGES, MODULE_ID} from "./constants.js"
 
 export const overlayVisibility = {
   ALWAYS: 'always',
@@ -33,21 +33,21 @@ Hooks.once("init", () => {
   // noinspection JSUnusedLocalSymbols
   for (const [key, settingName] of Object.entries(settingNames)) {
     if (!ignore.includes(settingName)) {
-      game.settings.register(MODULE_NAME, settingName, {
-        name: `${MODULE_NAME}.${settingName}`,
-        hint: `${MODULE_NAME}.${settingName}-hint`,
+      game.settings.register(MODULE_ID, settingName, {
+        name: `${MODULE_ID}.${settingName}`,
+        hint: `${MODULE_ID}.${settingName}-hint`,
         scope: "client",
         config: !hiddenSettings.includes(settingName),
         type: Boolean,
         default: !defaultFalse.includes(settingName),
-        onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
+        onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
       });
     }
   }
 
-  game.settings.register(MODULE_NAME, settingNames.MOVEMENT_ALPHA, {
-    name: `${MODULE_NAME}.${settingNames.MOVEMENT_ALPHA}`,
-    hint: `${MODULE_NAME}.${settingNames.MOVEMENT_ALPHA}-hint`,
+  game.settings.register(MODULE_ID, settingNames.MOVEMENT_ALPHA, {
+    name: `${MODULE_ID}.${settingNames.MOVEMENT_ALPHA}`,
+    hint: `${MODULE_ID}.${settingNames.MOVEMENT_ALPHA}-hint`,
     scope: 'client',
     config: true,
     type: Number,
@@ -57,110 +57,110 @@ Hooks.once("init", () => {
       max: 1,
       step: .05
     },
-    onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
+    onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
   });
 
-  game.settings.register(MODULE_NAME, settingNames.IC_VISIBILITY, {
-    name: `${MODULE_NAME}.${settingNames.IC_VISIBILITY}`,
-    hint: `${MODULE_NAME}.${settingNames.IC_VISIBILITY}-hint`,
+  game.settings.register(MODULE_ID, settingNames.IC_VISIBILITY, {
+    name: `${MODULE_ID}.${settingNames.IC_VISIBILITY}`,
+    hint: `${MODULE_ID}.${settingNames.IC_VISIBILITY}-hint`,
     scope: 'client',
     config: true,
     type: String,
     default: overlayVisibility.ALWAYS,
     choices: {
-      always: `${MODULE_NAME}.visibilities.${overlayVisibility.ALWAYS}`,
-      hotkeys: `${MODULE_NAME}.visibilities.${overlayVisibility.HOTKEYS}`,
-      never: `${MODULE_NAME}.visibilities.${overlayVisibility.NEVER}`,
+      always: `${MODULE_ID}.visibilities.${overlayVisibility.ALWAYS}`,
+      hotkeys: `${MODULE_ID}.visibilities.${overlayVisibility.HOTKEYS}`,
+      never: `${MODULE_ID}.visibilities.${overlayVisibility.NEVER}`,
     },
-    onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
+    onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
   });
 
-  game.settings.register(MODULE_NAME, settingNames.OOC_VISIBILITY, {
-    name: `${MODULE_NAME}.${settingNames.OOC_VISIBILITY}`,
-    hint: `${MODULE_NAME}.${settingNames.OOC_VISIBILITY}-hint`,
+  game.settings.register(MODULE_ID, settingNames.OOC_VISIBILITY, {
+    name: `${MODULE_ID}.${settingNames.OOC_VISIBILITY}`,
+    hint: `${MODULE_ID}.${settingNames.OOC_VISIBILITY}-hint`,
     scope: 'client',
     config: true,
     type: String,
     default: overlayVisibility.NEVER,
     choices: {
-      always: `${MODULE_NAME}.visibilities.${overlayVisibility.ALWAYS}`,
-      hotkeys: `${MODULE_NAME}.visibilities.${overlayVisibility.HOTKEYS}`,
-      never: `${MODULE_NAME}.visibilities.${overlayVisibility.NEVER}`,
+      always: `${MODULE_ID}.visibilities.${overlayVisibility.ALWAYS}`,
+      hotkeys: `${MODULE_ID}.visibilities.${overlayVisibility.HOTKEYS}`,
+      never: `${MODULE_ID}.visibilities.${overlayVisibility.NEVER}`,
     },
-    onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
+    onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
   });
 
-  game.settings.register(MODULE_NAME, settingNames.RANGES, {
-    name: `${MODULE_NAME}.${settingNames.RANGES}`,
-    hint: `${MODULE_NAME}.${settingNames.RANGES}-hint`,
+  game.settings.register(MODULE_ID, settingNames.RANGES, {
+    name: `${MODULE_ID}.${settingNames.RANGES}`,
+    hint: `${MODULE_ID}.${settingNames.RANGES}-hint`,
     scope: 'client',
     config: true,
     type: String,
     default: DEFAULT_WEAPON_RANGES,
-    onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
+    onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
   });
 
-  game.settings.register(MODULE_NAME, settingNames.DIAGONALS, {
-    name: `${MODULE_NAME}.${settingNames.DIAGONALS}.name`,
-    hint: `${MODULE_NAME}.${settingNames.DIAGONALS}.hint`,
+  game.settings.register(MODULE_ID, settingNames.DIAGONALS, {
+    name: `${MODULE_ID}.${settingNames.DIAGONALS}.name`,
+    hint: `${MODULE_ID}.${settingNames.DIAGONALS}.hint`,
     scope: 'world',
     config: true,
     type: String,
-    default: overlayVisibility.NEVER,
+    default: diagonals.FIVE_TEN_FIVE,
     choices: {
-      fiveTenFive: `${MODULE_NAME}.${settingNames.DIAGONALS}.${diagonals.FIVE_TEN_FIVE}`,
-      tenFiveTen: `${MODULE_NAME}.${settingNames.DIAGONALS}.${diagonals.TEN_FIVE_TEN}`,
-      five: `${MODULE_NAME}.${settingNames.DIAGONALS}.${diagonals.FIVE}`,
-      ten: `${MODULE_NAME}.${settingNames.DIAGONALS}.${diagonals.TEN}`,
+      fiveTenFive: `${MODULE_ID}.${settingNames.DIAGONALS}.${diagonals.FIVE_TEN_FIVE}`,
+      tenFiveTen: `${MODULE_ID}.${settingNames.DIAGONALS}.${diagonals.TEN_FIVE_TEN}`,
+      five: `${MODULE_ID}.${settingNames.DIAGONALS}.${diagonals.FIVE}`,
+      ten: `${MODULE_ID}.${settingNames.DIAGONALS}.${diagonals.TEN}`,
     },
-    onChange: () => { globalThis.movementPlanner.instance.fullRefresh()}
+    onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
   });
 });
 
 export async function setActive(isActive) {
-  await game.settings.set(MODULE_NAME, settingNames.IS_ACTIVE, isActive);
+  await game.settings.set(MODULE_ID, settingNames.IS_ACTIVE, isActive);
 }
 
 export function isActive() {
-  return game.settings.get(MODULE_NAME, settingNames.IS_ACTIVE);
+  return game.settings.get(MODULE_ID, settingNames.IS_ACTIVE);
 }
 
 export function isShowTurnOrder() {
-  return game.settings.get(MODULE_NAME, settingNames.SHOW_TURN_ORDER);
+  return game.settings.get(MODULE_ID, settingNames.SHOW_TURN_ORDER);
 }
 
 export function isShowPotentialTargets() {
-  return game.settings.get(MODULE_NAME, settingNames.SHOW_POTENTIAL_TARGETS);
+  return game.settings.get(MODULE_ID, settingNames.SHOW_POTENTIAL_TARGETS);
 }
 
 export function isShowWalls() {
-  return game.settings.get(MODULE_NAME, settingNames.SHOW_WALLS);
+  return game.settings.get(MODULE_ID, settingNames.SHOW_WALLS);
 }
 
 export function isShowDifficultTerrain() {
-  return game.settings.get(MODULE_NAME, settingNames.SHOW_DIFFICULT_TERRAIN);
+  return game.settings.get(MODULE_ID, settingNames.SHOW_DIFFICULT_TERRAIN);
 }
 
 export function getICVisibility() {
-  return game.settings.get(MODULE_NAME, settingNames.IC_VISIBILITY);
+  return game.settings.get(MODULE_ID, settingNames.IC_VISIBILITY);
 }
 
 export function getOOCVisibility() {
-  return game.settings.get(MODULE_NAME, settingNames.OOC_VISIBILITY);
+  return game.settings.get(MODULE_ID, settingNames.OOC_VISIBILITY);
 }
 
 export function getMovementAlpha() {
-  return game.settings.get(MODULE_NAME, settingNames.MOVEMENT_ALPHA);
+  return game.settings.get(MODULE_ID, settingNames.MOVEMENT_ALPHA);
 }
 
 export function getDiagonals() {
-  return game.settings.get(MODULE_NAME, settingNames.DIAGONALS);
+  return game.settings.get(MODULE_ID, settingNames.DIAGONALS);
 }
 
 export function isHotkeys() {
-  return game.settings.get(MODULE_NAME, settingNames.HOTKEYS);
+  return game.settings.get(MODULE_ID, settingNames.HOTKEYS);
 }
 
 export function getRanges() {
-  return game.settings.get(MODULE_NAME, settingNames.RANGES);
+  return game.settings.get(MODULE_ID, settingNames.RANGES);
 }
