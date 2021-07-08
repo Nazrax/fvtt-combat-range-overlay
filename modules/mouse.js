@@ -1,9 +1,12 @@
 import {MODULE_NAME} from "./constants.js"
+import {debugLog} from "./debug.js"
 
+/*
 const states = {
     DOWN: 'down',
     UP: 'up'
 };
+*/
 
 class Mouse {
   constructor() {
@@ -36,14 +39,14 @@ class Mouse {
   }
 
   _dragDropWrapper(wrapped, ...args) {
-    console.log("Drag Drop");
+    debugLog(false, "Drag Drop");
     this._leftDrag = false;
     this._executeHooks(false);
     return wrapped(...args);
   }
 
   _dragCancelWrapper(wrapped, ...args) {
-    console.log("Drag Cancel");
+    debugLog(false, "Drag Cancel");
     this._leftDrag = false;
     this._executeHooks(false);
     return wrapped(...args);
@@ -52,11 +55,16 @@ class Mouse {
 
 export const mouse = new Mouse();
 
-
-Hooks.on("libWrapper.Ready", () => {
+Hooks.once("libWrapper.Ready", () => {
+  // noinspection JSUnresolvedVariable,JSUnresolvedFunction
   libWrapper.ignore_conflicts(MODULE_NAME, ['drag-ruler', 'enhanced-terrain-layer'], ['Token.prototype._onDragLeftStart', 'Token.prototype._onDragLeftDrop', 'Token.prototype._onDragLeftCancel'])
 
+  // noinspection JSUnresolvedVariable,JSUnresolvedFunction
   libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftStart', mouse._dragStartWrapper.bind(mouse), 'WRAPPER');
+
+  // noinspection JSUnresolvedVariable,JSUnresolvedFunction
   libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftDrop', mouse._dragDropWrapper.bind(mouse), 'WRAPPER');
+
+  // noinspection JSUnresolvedVariable,JSUnresolvedFunction
   libWrapper.register(MODULE_NAME, 'Token.prototype._onDragLeftCancel', mouse._dragCancelWrapper.bind(mouse), 'WRAPPER');
 })

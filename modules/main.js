@@ -1,8 +1,7 @@
-import {FLAG_NAMES, MODULE_NAME} from "./constants.js"
-import {getCurrentToken, getWeaponRanges} from "./utility.js";
 import {keyboard} from "./keyboard.js";
 import {mouse} from "./mouse.js";
 
+import './debug.js';
 import './settings.js';
 import './controls.js';
 import './tokenInfo.js';
@@ -19,11 +18,12 @@ import {MovementPlanner} from "./movementPlanner.js"
  */
 
 Hooks.on("ready", function() {
-  console.log("This code runs once core initialization is ready and game data is available.");
-
   const instance = new MovementPlanner()
   globalThis.movementPlanner = {
-    instance
+    instance,
+    showNumericMovementCost: false,
+    showPathLines: false,
+    roundNumericMovementCost: true
   };
   instance.registerHooks();
   keyboard.addHook("Alt", instance.altKeyHandler.bind(instance));

@@ -4,8 +4,8 @@ import {
   getCombatantToken,
   getCombatantTokenDisposition,
   getCurrentToken,
-  safeDestroy
-} from "./utility.js";
+  safeDestroy, uiNotificationsWarn
+} from "./utility.js"
 
 import {GridTile} from "./gridTile.js";
 import {FEET_PER_TILE, FUDGE, MAX_DIST} from "./constants.js";
@@ -13,11 +13,9 @@ import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
 import {mouse} from "./mouse.js";
 import {keyboard} from "./keyboard.js";
+import {debugLog} from "./debug.js"
 
 const actionsToShow = 2;
-const roundNumericMovementCost = true;
-const showNumericMovementCost = false;
-const showPathLines = false;
 
 // Colors
 const colorByActions = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080]; // white, blue, yellow, red, purple
@@ -49,6 +47,32 @@ const turnOrderStyle = {
   stroke: 0x000000, // black
   strokeThickness: 5
 };
+
+function getDiagonalDelta() {
+  if (Settings.getDiagonals() === Settings.diagonals.FIVE_TEN_FIVE || Settings.getDiagonals() === Settings.diagonals.TEN_FIVE_TEN) {
+    return .5;
+  } else if (Settings.getDiagonals() === Settings.diagonals.FIVE) {
+    return 0;
+  } else if (Settings.getDiagonals() === Settings.diagonals.TEN) {
+    return 1;
+  } else {
+    console.log("Invalid diagonal method", Settings.getDiagonals())
+    return 0;
+  }
+}
+
+function diagonalDistance(rawDist) {
+  if (Settings.getDiagonals() === Settings.diagonals.FIVE_TEN_FIVE) {
+    return Math.floor(rawDist + FUDGE);
+  } else if (Settings.getDiagonals() === Settings.diagonals.TEN_FIVE_TEN) {
+    return Math.ceil(rawDist - FUDGE);
+  } else if (Settings.getDiagonals() === Settings.diagonals.FIVE || Settings.getDiagonals() === Settings.diagonals.TEN) {
+    return Math.round(rawDist);
+  } else {
+    console.log("Invalid diagonal method", Settings.getDiagonals())
+    return Math.round(rawDist);
+  }
+}
 
 export class MovementPlanner {
   constructor() {
@@ -111,11 +135,14 @@ export class MovementPlanner {
           // Blocked, do nothing
         } else {
           let newDistance = current.distance + neighbor.cost;
+
+          let diagonalDelta = getDiagonalDelta();
+
           if (current.isDiagonal(neighbor)) { // diagonals
-            newDistance += .5;
+            newDistance += diagonalDelta;
           }
 
-          if (Math.floor(newDistance+FUDGE) > maxTiles) {
+          if (diagonalDistance(newDistance) > maxTiles) {
             // Do nothing
           } else if (Math.abs(neighbor.distance - newDistance) < FUDGE) {
             neighbor.upstreams.add(current);
@@ -152,9 +179,12 @@ export class MovementPlanner {
     const tilesMovedPerAction = TokenInfo.current.speed / FEET_PER_TILE;
     const weaponRangeInTiles = TokenInfo.current.weaponRange / FEET_PER_TILE;
     const myDisposition = getCombatantTokenDisposition(currentToken);
+    debugLog("drawPotentialTargets", "|", "Current disposition", myDisposition);
 
     for (const combatant of game.combat.combatants) {
       const combatantToken = getCombatantToken(combatant);
+      debugLog("drawPotentialTargets", "|", "Potential target disposition", getCombatantTokenDisposition(combatantToken), combatantToken.id, combatantToken);
+
       if (getCombatantTokenDisposition(combatantToken) !== myDisposition) {
         if (combatantToken.visible && !combatant.defeated) {
           let tilesInRange = calculateTilesInRange(weaponRangeInTiles, combatantToken);
@@ -170,7 +200,7 @@ export class MovementPlanner {
             }
           }
 
-          const colorIndex = Math.min(Math.ceil(Math.floor(bestCost + FUDGE) / tilesMovedPerAction), colorByActions.length-1);
+          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), colorByActions.length-1);
           let color = colorByActions[colorIndex];
 
           const tokenOverlay = new PIXI.Graphics();
@@ -217,16 +247,22 @@ export class MovementPlanner {
     }
   }
 
+  // noinspection JSUnusedLocalSymbols
   dragHandler(dragging) {
     this.fullRefresh();
   }
 
+  // noinspection JSUnusedLocalSymbols
   altKeyHandler(event, state) {
     this.fullRefresh();
   }
 
   fullRefresh() {
     this.clearAll();
+
+    if (!Settings.isActive()) {
+      return;
+    }
 
     const currentToken = getCurrentToken();
     if (!currentToken) {
@@ -239,20 +275,15 @@ export class MovementPlanner {
     }
 
     let showOverlay = false;
-    if (Settings.isActive()) {
-      if (Settings.getVisibility() === Settings.overlayVisibility.ALWAYS) {
-        showOverlay = true;
-      } else if (Settings.getVisibility() === Settings.overlayVisibility.COMBAT && currentToken.inCombat) {
-        showOverlay = true;
-      } else if (Settings.getVisibility() === Settings.overlayVisibility.COMBAT_AND_HOTKEYS && (currentToken.inCombat || hotkeys)) {
-        showOverlay = true;
-      } else if (Settings.getVisibility() === Settings.overlayVisibility.HOTKEYS && hotkeys) {
-        showOverlay = true;
-      }
+    const visibilitySetting = currentToken.inCombat ? Settings.getICVisibility() : Settings.getOOCVisibility();
+    if (visibilitySetting === Settings.overlayVisibility.ALWAYS) {
+      showOverlay = true;
+    } else if (visibilitySetting === Settings.overlayVisibility.HOTKEYS && hotkeys) {
+      showOverlay = true;
+    }
 
-      if (showOverlay) {
-        this.drawAll();
-      }
+    if (showOverlay) {
+      this.drawAll();
     }
   }
 
@@ -379,7 +410,7 @@ export class MovementPlanner {
     if (showOnlyTargetPath && idealTileMap.size === 0) {
       if (this.newTarget) {
         this.newTarget = false;
-        ui.notifications.warn(game.i18n.localize("movement-planner.no-good-tiles"));
+        uiNotificationsWarn(game.i18n.localize("movement-planner.no-good-tiles"));
         showOnlyTargetPath = false;
       }
     }
@@ -401,8 +432,8 @@ export class MovementPlanner {
         }
       }
       if (drawTile) {
-        if (showNumericMovementCost) {
-          const label = roundNumericMovementCost ? Math.floor(tile.distance + FUDGE) : tile.distance;
+        if (globalThis.movementPlanner.showNumericMovementCost) {
+          const label = globalThis.movementPlanner.roundNumericMovementCost ? diagonalDistance(tile.distance) : tile.distance;
           const text = new PIXI.Text(label, movementCostStyle);
           const pt = tile.pt;
           text.position.x = pt.x;
@@ -410,7 +441,7 @@ export class MovementPlanner {
           this.overlays.distanceTexts.push(text);
         }
 
-        if (showPathLines) {
+        if (globalThis.movementPlanner.showPathLines) {
           let tileCenter = tile.centerPt;
           if (tile.upstreams !== undefined) {
             for (const upstream of tile.upstreams) {
@@ -422,7 +453,7 @@ export class MovementPlanner {
         }
 
         // Color tile based on number of actions to reach it
-        const colorIndex = Math.min(Math.ceil(Math.floor(tile.distance + FUDGE) / tilesMovedPerAction), colorByActions.length-1);
+        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), colorByActions.length-1);
         let color = colorByActions[colorIndex];
         let cornerPt = tile.pt;
         if (idealTileMap.has(tile.key)) {
@@ -561,4 +592,3 @@ function checkTileToTokenVisibility(tile, token) {
 
   return false;
 }
-
