@@ -633,7 +633,7 @@ function checkTileToTokenVisibility(tile, token) {
 
   for (const point of points) {
     const ray = new Ray(tileCenterPt, point);
-    if (!checkCollision(ray, {blockMovement: false, blockSenses: true, mode: 'any'})) {
+    if (!checkCollision(ray, {type: "sight", mode: 'any'})) {
       return true;
     }
   }
