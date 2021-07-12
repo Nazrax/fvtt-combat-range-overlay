@@ -36,7 +36,9 @@
     "quick-settings": {
       "title": "Combat Range Overlay Quick Settings",
       "weapon-range-header": "Weapon Range:",
-      "update-actor-checkbox": "Update actor instead of token?"
+      "update-actor-checkbox": "Update actor instead of token?",
+      "speed-override": "Force token speed to:",
+      "ignore-difficult-terrain": "Ignore difficult terrain?"
     },
     "controls": {
       "cant-open-no-selected-token": "Can't open quick settings without a selected token",
@@ -44,6 +46,9 @@
     },
     "activated-not-visible": "The Combat Range Overlay is now activated but is not yet visible (see Settings for details)",
     "show-weapon-range": "Show weapon range?",
-    "show-weapon-range-hint": "Annotate selected token with current weapon range"
+    "show-weapon-range-hint": "Annotate selected token with current weapon range",
+    "speed-attr-path": "Internal attribute path for Speed",
+    "speed-attr-path-hint": "Advanced: Set this only if you're using a System that can't autodetect token Speed",
+    "info-button": "Basic Information"
   }
 }

@@ -1,4 +1,5 @@
 import {MAX_DIST} from "./constants.js"
+import {TokenInfo} from "./tokenInfo.js"
 
 export class GridTile {
   constructor(gx, gy) {
@@ -26,8 +27,12 @@ export class GridTile {
   }
 
   get cost() {
-    // noinspection JSUnresolvedVariable
-    return canvas.terrain?.cost({x: this.gy, y: this.gx}) ?? 1;
+    if (TokenInfo.current.isIgnoreDifficultTerrain) {
+      return 1;
+    } else {
+      // noinspection JSUnresolvedVariable
+      return canvas.terrain?.cost({x: this.gy, y: this.gx}) ?? 1;
+    }
   }
 
   get allUpstreams() {
