@@ -81,10 +81,14 @@ export class TokenInfo {
       throw("Tried to call getSpeed with an undefined actor");
     }
 
-    const speedAttr = actor.data.data.attributes.speed;
+    const actorAttrs = actor.data.data.attributes;
+    const speedAttr = actorAttrs.speed ?? actorAttrs.movement;
     let speed = speedAttr.total ?? 0;
+
+    // Map DND5e movement to Pathfinder2e speeds
     // noinspection JSUnresolvedVariable
-    speedAttr.otherSpeeds.forEach(otherSpeed => {
+    const otherSpeeds = speedAttr.otherSpeeds ?? Object.entries(speedAttr).map(a => {return {total: a[1]}});
+    otherSpeeds.forEach(otherSpeed => {
       if (otherSpeed.total > speed) {
         speed = otherSpeed.total;
       }
