@@ -4,7 +4,9 @@ export const DEFAULT_WEAPON_RANGE = 5;
 export const DEFAULT_WEAPON_RANGES = "5,10,30,60,120";
 
 export const FLAG_NAMES = {
-  WEAPON_RANGE: "weaponRange"
+  WEAPON_RANGE: "weaponRange",
+  SPEED_OVERRIDE: "speedOverride",
+  IGNORE_DIFFICULT_TERRAIN: "ignoreDifficultTerrain"
 };
 
 export const MAX_DIST = 999;

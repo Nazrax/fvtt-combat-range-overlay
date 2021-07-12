@@ -1,4 +1,5 @@
 import {DEFAULT_WEAPON_RANGES, MODULE_ID} from "./constants.js"
+import ModuleInfoApp from "./moduleInfo.js"
 
 export const overlayVisibility = {
   ALWAYS: 'always',
@@ -24,13 +25,23 @@ const settingNames = {
   MOVEMENT_ALPHA: 'movement-alpha',
   RANGES: 'ranges',
   DIAGONALS: 'diagonals',
-  SHOW_WEAPON_RANGE: "show-weapon-range"
+  SHOW_WEAPON_RANGE: "show-weapon-range",
+  SPEED_ATTR_PATH: "speed-attr-path",
+  INFO_BUTTON: "info-button",
 };
 const hiddenSettings = [settingNames.IS_ACTIVE];
-const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS];
-const ignore = [settingNames.MOVEMENT_ALPHA, settingNames.IC_VISIBILITY, settingNames.OOC_VISIBILITY, settingNames.RANGES, settingNames.DIAGONALS];
+const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS, settingNames.IGNORE_DIFFICULT_TERRAIN];
+const ignore = [settingNames.MOVEMENT_ALPHA, settingNames.IC_VISIBILITY, settingNames.OOC_VISIBILITY, settingNames.RANGES, settingNames.DIAGONALS, settingNames.SPEED_ATTR_PATH, settingNames.INFO_BUTTON];
 
 Hooks.once("init", () => {
+  game.settings.registerMenu(MODULE_ID, settingNames.INFO_BUTTON, {
+    name: `${MODULE_ID}.${settingNames.INFO_BUTTON}`,
+    label: `${MODULE_ID}.${settingNames.INFO_BUTTON}`,
+    icon: "fas fa-info-circle",
+    type: ModuleInfoApp,
+    restricted: false
+  });
+
   // noinspection JSUnusedLocalSymbols
   for (const [key, settingName] of Object.entries(settingNames)) {
     if (!ignore.includes(settingName)) {
@@ -116,6 +127,15 @@ Hooks.once("init", () => {
     },
     onChange: () => { globalThis.combatRangeOverlay.instance.fullRefresh()}
   });
+
+  game.settings.register(MODULE_ID, settingNames.SPEED_ATTR_PATH, {
+    name: `${MODULE_ID}.${settingNames.SPEED_ATTR_PATH}`,
+    hint: `${MODULE_ID}.${settingNames.SPEED_ATTR_PATH}-hint`,
+    scope: 'world',
+    config: true,
+    type: String,
+    default: ""
+  });
 });
 
 export async function setActive(isActive) {
@@ -168,4 +188,8 @@ export function getRanges() {
 
 export function isShowWeaponRange() {
   return game.settings.get(MODULE_ID, settingNames.SHOW_WEAPON_RANGE);
+}
+
+export function getSpeedAttrPath() {
+  return game.settings.get(MODULE_ID, settingNames.SPEED_ATTR_PATH);
 }

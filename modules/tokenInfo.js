@@ -1,6 +1,7 @@
 import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
 import {canvasTokensGet, getCurrentToken} from "./utility.js"
 import {debugLog} from "./debug.js"
+import {getSpeedAttrPath} from "./settings.js"
 
 export class TokenInfo {
   static _tokenInfoMap = new Map();
@@ -48,31 +49,57 @@ export class TokenInfo {
     return ti;
   }
 
-  get weaponRange() {
+  getFlag(flagName, dflt=undefined) {
     // Somehow unlinked tokens get their own copies of actors (they even share IDs) but which have their own flags
     const baseActor = game.actors.get(this.token.actor.id);
 
     // Idea is being stupid - this isn't actually deprecated
     // noinspection JSDeprecatedSymbols
-    return this.token.document.getFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE) ??
-      baseActor.getFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE) ??
-      DEFAULT_WEAPON_RANGE;
+    return this.token.document.getFlag(MODULE_ID, flagName) ??
+      baseActor.getFlag(MODULE_ID, flagName) ??
+      dflt;
   }
 
-  async setWeaponRange(range, updateActor=false) {
+  get weaponRange() {
+    return this.getFlag(FLAG_NAMES.WEAPON_RANGE, DEFAULT_WEAPON_RANGE);
+  }
+
+  get speedOverride() {
+    return this.getFlag(FLAG_NAMES.SPEED_OVERRIDE);
+  }
+
+  get isIgnoreDifficultTerrain() {
+    return this.getFlag(FLAG_NAMES.IGNORE_DIFFICULT_TERRAIN);
+  }
+
+  async setFlag(flagName, newValue, updateActor) {
+    debugLog("setFlag", flagName, newValue, updateActor);
+
     // Somehow unlinked tokens get their own copies of actors (they even share IDs) but which have their own flags
     const baseActor = game.actors.get(this.token.actor.id);
 
-    // Idea is being stupid - these isn't actually deprecated
+    // Idea is being stupid - it's looking up the deprecated versions of the methods
     if (updateActor) {
       // noinspection JSDeprecatedSymbols
-      await this.token.document.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, undefined);
+      await this.token.document.unsetFlag(MODULE_ID, flagName);
       // noinspection JSDeprecatedSymbols
-      await baseActor.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, range);
+      await baseActor.setFlag(MODULE_ID, flagName, newValue);
     } else {
       // noinspection JSDeprecatedSymbols
-      await this.token.document.setFlag(MODULE_ID, FLAG_NAMES.WEAPON_RANGE, range);
+      await this.token.document.setFlag(MODULE_ID, flagName, newValue);
     }
+  }
+
+  async setWeaponRange(range, updateActor=false) {
+    await this.setFlag(FLAG_NAMES.WEAPON_RANGE, range, updateActor);
+  }
+
+  async setSpeedOverride(speed, updateActor=false) {
+    await this.setFlag(FLAG_NAMES.SPEED_OVERRIDE, speed, updateActor);
+  }
+
+  async setIgnoreDifficultTerrain(isIgnore, updateActor=false) {
+    await this.setFlag(FLAG_NAMES.IGNORE_DIFFICULT_TERRAIN, isIgnore, updateActor);
   }
 
   get speed() {
@@ -81,19 +108,26 @@ export class TokenInfo {
       throw("Tried to call getSpeed with an undefined actor");
     }
 
-    const actorAttrs = actor.data.data.attributes;
-    const speedAttr = actorAttrs.speed ?? actorAttrs.movement;
-    let speed = speedAttr.total ?? 0;
+    if (this.speedOverride) {
+      return this.speedOverride;
+    } else if (getSpeedAttrPath()) {
+      // noinspection JSCheckFunctionSignatures,JSUnresolvedVariable
+      return foundry.utils.getProperty(actor.data, getSpeedAttrPath());
+    } else {
+      const actorAttrs = actor.data.data.attributes;
+      const speedAttr = actorAttrs.speed ?? actorAttrs.movement;
+      let speed = speedAttr.total ?? 0;
 
-    // Map DND5e movement to Pathfinder2e speeds
-    // noinspection JSUnresolvedVariable
-    const otherSpeeds = speedAttr.otherSpeeds ?? Object.entries(speedAttr).map(a => {return {total: a[1]}});
-    otherSpeeds.forEach(otherSpeed => {
-      if (otherSpeed.total > speed) {
-        speed = otherSpeed.total;
-      }
-    })
-    return speed;
+      // Map DND5e movement to Pathfinder2e speeds
+      // noinspection JSUnresolvedVariable
+      const otherSpeeds = speedAttr.otherSpeeds ?? Object.entries(speedAttr).map(a => {return {total: a[1]}});
+      otherSpeeds.forEach(otherSpeed => {
+        if (otherSpeed.total > speed) {
+          speed = otherSpeed.total;
+        }
+      })
+      return speed;
+    }
   }
 }
 

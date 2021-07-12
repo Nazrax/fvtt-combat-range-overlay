@@ -11,16 +11,24 @@ const TOGGLE_BUTTON = "combatRangeOverlayButton";
 async function _submitDialog(i, html) {
   debugLog("_submitDialog", i, html);
   const updateActor = html.find("[name=update-actor]")[0]?.checked;
+  const speedOverride = html.find("[name=speed-override]")[0]?.value;
+  const ignoreTerrain = html.find("[name=ignore-difficult-terrain]")[0]?.checked;
   await TokenInfo.current.setWeaponRange(i, updateActor);
+  await TokenInfo.current.setSpeedOverride(speedOverride, updateActor);
+  await TokenInfo.current.setIgnoreDifficultTerrain(ignoreTerrain, updateActor);
 }
 
 function _showRangeDialog() {
   const buttons = Object.fromEntries(getWeaponRanges().map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
 
+  const speedOverride = TokenInfo.current.speedOverride ?? "";
+  const ignoreDifficultTerrainChecked = TokenInfo.current.ignoreDifficultTerrain ? "checked" : "";
   const content = [];
   if (game.user.isGM) {
-    content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.update-actor-checkbox`)} <input name="update-actor" type="checkbox"/></td></tr></table></p>`);
+    content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.update-actor-checkbox`)} <input name="update-actor" type="checkbox"/></p>`);
   }
+  content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.ignore-difficult-terrain`)} <input name="ignore-difficult-terrain" type="checkbox" ${ignoreDifficultTerrainChecked}/></p>`);
+  content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.speed-override`)} <input name="speed-override" type="text" value="${speedOverride}" size="3" style="width: 40px" maxlength="3"/>`);
   content.push(`<p>${game.i18n.localize(`${MODULE_ID}.quick-settings.weapon-range-header`)}</p>`);
 
   let d = new Dialog({
