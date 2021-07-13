@@ -6,6 +6,19 @@ This module is designed to quickly and efficiently answer questions such as "How
 
 Click ![the button](https://media.githubusercontent.com/media/Nazrax/fvtt-combat-range-overlay/media/images/button.png) to toggle the Overlay on and off. Once the Overlay is enabled, it should Just Work™ with little to no interaction from you. By default, it assumes your weapon has a range of 5 feet; shift-click the button to change it for your currently selected token. Normally the overlay will reread your position at the end of your combat turn; control-click the button to force the Overlay to reposition. Display preferences are available in the module's Settings page.
 
+## Compatibility
+Maps: This module relies on square tiles; I have no idea what would happen if you tried to use it on a map with hex tiles, but I don't think it would go well.
+
+Systems: My table plays Pathfinder 2E, and that's all I've tested it with.
+It turns out that every system stores its token/actor move speeds in a different spot,
+so out of the box speed autodetection will only work with Pathfinder 1, Pathfinder 2E, DND3.5,
+and DND5E. If you're playing with a different system, you'll need to do some
+[extra configuration](#advanced-setting-the-speed-attribute-path). Also, I believe other systems
+treat diagonals differently, so there's a (GM-only) setting telling the module how to count
+diagonal movement.
+
+Modules: This module requires lib-wrapper and supports the Enhanced Terrain Layer.
+
 ## Understanding the Overlay
 
 ![legend](https://media.githubusercontent.com/media/Nazrax/fvtt-combat-range-overlay/media/images/legend.png)
@@ -26,7 +39,7 @@ The overlay in this image assumes a movement speed of 15ft/action and a weapon r
 If a target is selected, tiles in your movement range _and_ in range of the target will be highlighted in white, and only tiles on the shortest path to the highlighted squares will remain tinted.  
 If multiple targets are selected, only tiles in range of _all_ targeted enemies will be highlighted. If there's no way to hit all targeted enemies at once, the Overlay will display a warning and act as if no enemies are targeted.
 
-## Use-cases
+## Sample Use-cases
 
 The Overlay is useful no matter what kind of character you're playing as:
 
@@ -73,3 +86,15 @@ You're pretty sure you can kill any of these enemies on your turn, and you'd lik
 
 ![](https://media.githubusercontent.com/media/Nazrax/fvtt-combat-range-overlay/media/images/tactician-overlay.png)  
 Or you can use the Overlay to see who's close to you _and_ going before your teammate.
+
+## Advanced: Setting the speed attribute path
+If you're using an unsupported System, you'll need to set the speed attribute path in 
+the module settings. Here's how to do it:
+1) Select a token
+1) Open your browser's dev tools and switch to the Javascript console
+1) Type in `canvas.tokens.controlled[0].actor.data` and press Enter
+1) Expand the result, then keep expanding children until you find the speed. Take note of each child
+you expand
+    * For instance, with Pathfinder 2E, you expand `data`, `attributes`, `speed`, and find the speed in `total` ![](https://media.githubusercontent.com/media/Nazrax/fvtt-combat-range-overlay/media/images/speed-attribute.png)
+1) Join these names with periods to come up with your attribute path
+    * For Pathfinder 2E, this would be `data.attributes.speed.total`
