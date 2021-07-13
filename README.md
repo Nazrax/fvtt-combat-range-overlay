@@ -93,7 +93,7 @@ the module settings. Here's how to do it:
 1) Select a token
 1) Open your browser's dev tools and switch to the Javascript console
 1) Type in `canvas.tokens.controlled[0].actor.data` and press Enter
-1) Expand the result, then keep expanding children until you find the speed. Take note of each child
+1) Expand the result, then keep expanding children until you find the movement speed. Take note of each child
 you expand
     * For instance, with Pathfinder 2E, you expand `data`, `attributes`, `speed`, and find the speed in `total` ![](https://media.githubusercontent.com/media/Nazrax/fvtt-combat-range-overlay/media/images/speed-attribute.png)
 1) Join these names with periods to come up with your attribute path
