@@ -1,5 +1,5 @@
 import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
-import {canvasTokensGet, getCurrentToken} from "./utility.js"
+import {canvasTokensGet, getCurrentToken, uiNotificationsWarn} from "./utility.js"
 import {debugLog} from "./debug.js"
 import {getSpeedAttrPath} from "./settings.js"
 
@@ -37,7 +37,11 @@ export class TokenInfo {
   }
 
   static get current() {
-    return TokenInfo.getById(getCurrentToken().id);
+    if (getCurrentToken() !== undefined) {
+      return TokenInfo.getById(getCurrentToken().id);
+    } else {
+      return undefined;
+    }
   }
 
   static getById(tokenId) {
@@ -114,20 +118,32 @@ export class TokenInfo {
       // noinspection JSCheckFunctionSignatures,JSUnresolvedVariable
       return foundry.utils.getProperty(actor.data, getSpeedAttrPath());
     } else {
-      const actorAttrs = actor.data.data.attributes;
-      const speedAttr = actorAttrs.speed ?? actorAttrs.movement;
-      let speed = speedAttr.total ?? 0;
-
-      // Map DND5e movement to Pathfinder2e speeds
-      // noinspection JSUnresolvedVariable
-      const otherSpeeds = speedAttr.otherSpeeds ?? Object.entries(speedAttr).map(a => {return {total: a[1]}});
-      otherSpeeds.forEach(otherSpeed => {
-        if (otherSpeed.total > speed) {
-          speed = otherSpeed.total;
-        }
-      })
-      return speed;
+      return this.getSpeedFromAttributes()
     }
+  }
+
+  getSpeedFromAttributes() {
+    const actor = this.token.actor;
+    const actorAttrs = actor.data.data.attributes;
+
+    let speed = 0;
+    let otherSpeeds = [];
+    if (game.system.id === "pf1" || game.system.id === "D35E") {
+      otherSpeeds = Object.entries(otherSpeeds = actorAttrs.speed).map(s => s[1].total);
+    } else if (game.system.id === "pf2e") {
+      speed = actorAttrs.speed.total;
+      // noinspection JSUnresolvedVariable
+      otherSpeeds = actorAttrs.speed.otherSpeeds.map(s => s.total);
+    } else if (game.system.id === "dnd5e") {
+      otherSpeeds = Object.entries(actorAttrs.movement).filter(s => typeof(s[1]) === "number").map(s => s[1]);
+    }
+
+    otherSpeeds.forEach(otherSpeed => {
+      if (otherSpeed.total > speed) {
+        speed = otherSpeed.total;
+      }
+    })
+    return speed;
   }
 }
 
@@ -177,3 +193,13 @@ Hooks.on("updateToken", (tokenDocument, updateData, options, someId) => {
   }
   globalThis.combatRangeOverlay.instance.fullRefresh();
 });
+
+Hooks.on("controlToken", (token, boolFlag) => {
+  if (boolFlag && TokenInfo.current.speed === 0 && TokenInfo.current.getSpeedFromAttributes() === 0) {
+    if (game.user.isGM) {
+      uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.token-speed-warning-gm`));
+    } else {
+      uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.token-speed-warning-player`));
+    }
+  }
+})

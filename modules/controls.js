@@ -41,6 +41,7 @@ function _showRangeDialog() {
 
 async function _toggleButtonClick(toggled, controls) {
   let isActive = Settings.isActive()
+  let wasActive = Settings.isActive()
 
   if (keyboard.isDown("Shift")) {  // Pop quick settings
     let token = getCurrentToken();
@@ -71,6 +72,15 @@ async function _toggleButtonClick(toggled, controls) {
   // We _must_ set .active _before_ using await or the button will be drawn and we'll be too late
   controls.find(group => group.name === "token").tools.find(t => t.name === TOGGLE_BUTTON).active = isActive;
   await Settings.setActive(isActive);
+
+  if (!wasActive && isActive && TokenInfo.current && TokenInfo.current.speed === 0 && TokenInfo.current.getSpeedFromAttributes() == 0) {
+    if (game.user.isGM) {
+      uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.token-speed-warning-gm`));
+    } else {
+      uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.token-speed-warning-player`));
+      _showRangeDialog();
+    }
+  }
 }
 
 let toggleButton;
