@@ -139,10 +139,13 @@ export class TokenInfo {
     }
 
     otherSpeeds.forEach(otherSpeed => {
-      if (otherSpeed.total > speed) {
-        speed = otherSpeed.total;
+      if (otherSpeed > speed) {
+        speed = otherSpeed;
       }
     })
+
+    debugLog("getSpeedFromAttributes()", game.system.id, otherSpeeds, speed);
+
     return speed;
   }
 }
