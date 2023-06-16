@@ -11,7 +11,7 @@ Maps: This module relies on square tiles; I have no idea what would happen if yo
 
 Systems: My table plays Pathfinder 2E, and that's all I've tested it with.
 It turns out that every system stores its token/actor move speeds in a different spot,
-so out of the box speed autodetection will only work with Pathfinder 1, Pathfinder 2E, DND3.5,
+so out of the box speed autodetection will only work with Pathfinder 2E but may work with Pathfinder 1E, DND3.5,
 and DND5E. If you're playing with a different system, you'll need to do some
 [extra configuration](#advanced-setting-the-speed-attribute-path). Also, I believe other systems
 treat diagonals differently, so there's a (GM-only) setting telling the module how to count
