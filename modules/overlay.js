@@ -142,7 +142,7 @@ export class Overlay {
         }
 
         const ray = new Ray(neighbor.centerPt, current.centerPt);
-        if (checkCollision(ray, {blockMovement: true, blockSenses: false, mode: 'any'})) {
+        if (checkCollision(ray, {type: "move", blockMovement: true, blockSenses: false, mode: 'any'})) {
           // Blocked, do nothing
         } else {
           let newDistance = current.distance + neighbor.cost;
@@ -172,7 +172,7 @@ export class Overlay {
 
   calculateTargetRangeMap() {
     const targetMap = new Map();
-    const weaponRangeInTiles = TokenInfo.current.weaponRange / FEET_PER_TILE;
+    const weaponRangeInTiles = TokenInfo.current.weaponRange.map(i => i / FEET_PER_TILE);
 
     for (const targetToken of game.user.targets) {
       targetMap.set(targetToken.id, calculateTilesInRange(weaponRangeInTiles, targetToken));
@@ -188,7 +188,7 @@ export class Overlay {
     }
 
     const tilesMovedPerAction = TokenInfo.current.speed / FEET_PER_TILE;
-    const weaponRangeInTiles = TokenInfo.current.weaponRange / FEET_PER_TILE;
+    const weaponRangeInTiles = TokenInfo.current.weaponRange.map(i => i / FEET_PER_TILE);
     const myDisposition = getCombatantTokenDisposition(currentToken);
     debugLog("drawPotentialTargets", "|", "Current disposition", myDisposition);
 
@@ -256,7 +256,8 @@ export class Overlay {
     if (Settings.isShowDifficultTerrain() && canvas.terrain) {
       try {
         // noinspection JSUnresolvedVariable
-        canvas.terrain.visible = true;
+        canvas.terrain._tokenDrag = true;
+        canvas.terrain.refreshVisibility();
       } catch {
         // Ignore
       }
@@ -362,7 +363,8 @@ export class Overlay {
     if (Settings.isShowDifficultTerrain()) {
       try {
         // noinspection JSUnresolvedVariable
-        canvas.terrain.visible = false;
+        canvas.terrain._tokenDrag = false;
+        canvas.terrain.refreshVisibility();
       } catch {
         // Ignore
       }
@@ -525,16 +527,14 @@ export class Overlay {
 
   drawWalls() {
     this.overlays.wallsOverlay.lineStyle(wallLineWidth, wallLineColor);
-    for (const quadtree of canvas.walls.quadtree.nodes) {
-      for (const obj of quadtree.objects) {
-        const wall = obj.t;
-        if (wall.data.door || !wall.data.move) {
-          continue;
-        }
-        const c = wall.data.c;
-        this.overlays.wallsOverlay.moveTo(c[0], c[1]);
-        this.overlays.wallsOverlay.lineTo(c[2], c[3]);
+    for (const obj of canvas.walls.quadtree.objects) {
+      const wall = obj.t;
+      if (wall.document.door || !wall.document.move) {
+         continue;
       }
+      const c = wall.document.c;
+      this.overlays.wallsOverlay.moveTo(c[0], c[1]);
+      this.overlays.wallsOverlay.lineTo(c[2], c[3]);
     }
     canvas.drawings.addChild(this.overlays.wallsOverlay);
   }
@@ -572,31 +572,40 @@ function calculateTilesInRange(rangeInTiles, targetToken) {
   const targetGridHeight = Math.floor(targetToken.hitArea.height / canvasGridSize());
   const targetGridWidth = Math.floor(targetToken.hitArea.width / canvasGridSize());
 
-  // Loop over X and Y deltas, computing distance for only a single quadrant
-  for(let gridXDelta = 0; gridXDelta <= rangeInTiles; gridXDelta++) {
-    for(let gridYDelta = 0; gridYDelta <= rangeInTiles; gridYDelta++) {
-      if (gridXDelta === 0 && gridYDelta === 0) {
-        continue;
-      }
+  for (const rangeInTilesElement of rangeInTiles) {
+    // Loop over X and Y deltas, computing distance for only a single quadrant
+    for(let gridXDelta = 0; gridXDelta <= rangeInTilesElement; gridXDelta++) {
+      for(let gridYDelta = 0; gridYDelta <= rangeInTilesElement; gridYDelta++) {
+        if (gridXDelta === 0 && gridYDelta === 0) {
+          continue;
+        }
 
-      const shotDistance = calculateGridDistance({x: 0, y: 0}, {x: gridXDelta, y: gridYDelta});
-      if (shotDistance < rangeInTiles + FUDGE) { // We're within range
-        // We need to test visibility for all 4 quadrants
-        // Use sets so we don't have to explicitly test for "on the same row/column as"
-        const gridXSet = new Set();
-        const gridYSet = new Set();
-        gridXSet.add(targetGridX + gridXDelta + targetGridWidth - 1);
-        gridXSet.add(targetGridX - gridXDelta);
-        gridYSet.add(targetGridY + gridYDelta + targetGridHeight - 1);
-        gridYSet.add(targetGridY - gridYDelta);
-        for (const testGridX of gridXSet) {
-          for (const testGridY of gridYSet) {
-            const testTile = new GridTile(testGridX, testGridY);
-            //const testTilePoint = testTile.pt;
+        const shotDistance = calculateGridDistance({x: 0, y: 0}, {x: gridXDelta, y: gridYDelta});
+        if (shotDistance < rangeInTilesElement + FUDGE) { // We're within range
+          // We need to test visibility for all 4 quadrants
+          // Use sets so we don't have to explicitly test for "on the same row/column as"
+          const gridXSet = new Set();
+          const gridYSet = new Set();
+          gridXSet.add(targetGridX + gridXDelta + targetGridWidth - 1);
+          gridXSet.add(targetGridX - gridXDelta);
+          gridYSet.add(targetGridY + gridYDelta + targetGridHeight - 1);
+          gridYSet.add(targetGridY - gridYDelta);
+          for (const testGridX of gridXSet) {
+            for (const testGridY of gridYSet) {
+              const testTile = new GridTile(testGridX, testGridY);
+              //const testTilePoint = testTile.pt;
+              let isDupe = false;
+              for (const entry of tileSet) {
+                if (entry.key === testTile.key) {
+                  isDupe = true;
+                  break;
+                }
+              }
 
-            let clearShot = checkTileToTokenVisibility(testTile, targetToken);
-            if (clearShot) {
-              tileSet.add(testTile);
+              let clearShot = checkTileToTokenVisibility(testTile, targetToken);
+              if (clearShot && !isDupe) {
+                tileSet.add(testTile);
+              }
             }
           }
         }
