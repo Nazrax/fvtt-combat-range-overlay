@@ -26,7 +26,9 @@ Hooks.on("ready", function() {
     roundNumericMovementCost: true
   };
   instance.registerHooks();
-   mouse.addHook(instance.dragHandler.bind(instance))
+  mouse.addHook(instance.dragHandler.bind(instance))
+  window.addEventListener("keydown", instance.altKeyHandler.bind(instance));
+  window.addEventListener("keyup", instance.altKeyHandler.bind(instance));
 });
 
 Hooks.on("hoverToken", (token, hovering) =>{
