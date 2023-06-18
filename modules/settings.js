@@ -170,8 +170,8 @@ Hooks.once("init", () => {
   })
 
   game.keybindings.register(MODULE_ID, 'resetMeasureFrom', {
-    name: `${MODULE_ID}.keybindings.resetMeasureFrom`,
-    hint: `${MODULE_ID}.keybindings.resetMeasureFrom`,
+    name: `${MODULE_ID}.keybindings.resetMeasureFrom.name`,
+    hint: `${MODULE_ID}.keybindings.resetMeasureFrom.hint`,
     editable: [
       {
         key: 'ControlLeft'
