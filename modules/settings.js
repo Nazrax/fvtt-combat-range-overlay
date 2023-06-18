@@ -1,4 +1,4 @@
-import {DEFAULT_WEAPON_RANGES, MODULE_ID} from "./constants.js"
+import {DEFAULT_WEAPON_RANGES, MODULE_ID, PRESSED_KEYS} from "./constants.js"
 import ModuleInfoApp from "./moduleInfo.js"
 
 export const overlayVisibility = {
@@ -136,6 +136,54 @@ Hooks.once("init", () => {
     type: String,
     default: ""
   });
+
+  game.keybindings.register(MODULE_ID, 'showOverlay', {
+    name: `${MODULE_ID}.keybindings.showOverlay.name`,
+    hint: `${MODULE_ID}.keybindings.showOverlay.hint`,
+    editable: [
+      {
+        key: 'AltLeft'
+      }
+    ],
+    onDown: () => {
+      PRESSED_KEYS.showOverlay = true;
+    },
+    onUp: () => {
+      PRESSED_KEYS.showOverlay = false;
+    }
+  })
+
+  game.keybindings.register(MODULE_ID, 'quickSettings', {
+    name: `${MODULE_ID}.keybindings.quickSettings.name`,
+    hint: `${MODULE_ID}.keybindings.quickSettings.hint`,
+    editable: [
+      {
+        key: 'ShiftLeft'
+      }
+    ],
+    onDown: () => {
+      PRESSED_KEYS.quickSettings = true;
+    },
+    onUp: () => {
+      PRESSED_KEYS.quickSettings = false;
+    }
+  })
+
+  game.keybindings.register(MODULE_ID, 'resetMeasureFrom', {
+    name: `${MODULE_ID}.keybindings.resetMeasureFrom`,
+    hint: `${MODULE_ID}.keybindings.resetMeasureFrom`,
+    editable: [
+      {
+        key: 'ControlLeft'
+      }
+    ],
+    onDown: () => {
+      PRESSED_KEYS.resetMeasureFrom = true;
+    },
+    onUp: () => {
+      PRESSED_KEYS.resetMeasureFrom = false;
+    }
+  })
 });
 
 export async function setActive(isActive) {

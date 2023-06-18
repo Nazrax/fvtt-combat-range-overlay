@@ -1,8 +1,7 @@
 import {getCurrentToken, getWeaponRanges, uiNotificationsWarn} from "./utility.js"
-import {keyboard} from "./keyboard.js";
 import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
-import {MODULE_ID} from "./constants.js"
+import {MODULE_ID, PRESSED_KEYS} from "./constants.js"
 import {debugLog} from "./debug.js"
 
 const TOGGLE_BUTTON = "combatRangeOverlayButton";
@@ -43,7 +42,7 @@ async function _toggleButtonClick(toggled, controls) {
   let isActive = Settings.isActive()
   let wasActive = Settings.isActive()
 
-  if (keyboard.isDown("Shift")) {  // Pop quick settings
+  if (PRESSED_KEYS.quickSettings) {  // Pop quick settings
     let token = getCurrentToken();
     if (!token) {
       uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.controls.cant-open-no-selected-token`));
@@ -53,7 +52,7 @@ async function _toggleButtonClick(toggled, controls) {
 
       _showRangeDialog();
     }
-  } else if (keyboard.isDown("Control")) { // Reset measureFrom
+  } else if (PRESSED_KEYS.resetMeasureFrom) { // Reset measureFrom
     let token = getCurrentToken();
     if (!token) {
       uiNotificationsWarn(game.i18n.localize(`${MODULE_ID}.controls.cant-reset-no-token`));

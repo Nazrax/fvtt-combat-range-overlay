@@ -20,7 +20,7 @@
     "ooc_visibility-hint": "When should the overlay be visible out of combat?",
     "visibilities": {
       "always": "Always",
-      "hotkeys": "Only with ALT or token drag",
+      "hotkeys": "Only with hotkey or token drag",
       "never": "Never"
     },
     "ranges": "Available weapon ranges",
@@ -51,6 +51,20 @@
     "speed-attr-path-hint": "Advanced: Set this only if you're using a System that can't autodetect token Speed",
     "info-button": "Basic Information",
     "token-speed-warning-gm": "I can't autodetect token speed; please manually set your token's speed and/or set the Speed Attribute in the module settings (and maybe open an issue to add support for your System)",
-    "token-speed-warning-player": "Please manually set your token's speed (and maybe ask your GM to configure the Speed Attribute in the module settings)"
+    "token-speed-warning-player": "Please manually set your token's speed (and maybe ask your GM to configure the Speed Attribute in the module settings)",
+    "keybindings": {
+      "showOverlay": {
+        "name": "Show overlay",
+        "hint": "Will show the overlay when held if the show on hotkey setting is on"
+      },
+      "quickSettings": {
+        "name": "Quick settings",
+        "hint": "Will bring up the override panel if held when clicking the overlay control button \ue068"
+      },
+      "resetMeasureFrom": {
+        "name": "Reset active token",
+        "hint": "Will reset the active token if held when clicking the overlay control button \ue068"
+      }
+    }
   }
 }
