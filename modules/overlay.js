@@ -271,7 +271,9 @@ export class Overlay {
 
   // noinspection JSUnusedLocalSymbols
   altKeyHandler(event, state) {
-    this.fullRefresh();
+    if(!event.repeat) {
+      this.fullRefresh();
+    }
   }
 
   fullRefresh() {
