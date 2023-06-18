@@ -8,11 +8,10 @@ import {
 } from "./utility.js"
 
 import {GridTile} from "./gridTile.js";
-import {FEET_PER_TILE, FUDGE, MAX_DIST, MODULE_ID} from "./constants.js"
+import {FEET_PER_TILE, FUDGE, MAX_DIST, MODULE_ID, PRESSED_KEYS} from "./constants.js"
 import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
 import {mouse} from "./mouse.js";
-import {keyboard} from "./keyboard.js";
 import {debugLog} from "./debug.js"
 
 const actionsToShow = 2;
@@ -271,7 +270,9 @@ export class Overlay {
 
   // noinspection JSUnusedLocalSymbols
   altKeyHandler(event, state) {
-    this.fullRefresh();
+    if(!event.repeat) {
+      this.fullRefresh();
+    }
   }
 
   fullRefresh() {
@@ -285,7 +286,7 @@ export class Overlay {
     const currentToken = getCurrentToken();
     if (currentToken) {
       let hotkeys = false;
-      if (keyboard.isDown("Alt") || mouse.isLeftDrag()) {
+      if (PRESSED_KEYS.showOverlay || mouse.isLeftDrag()) {
         hotkeys = true;
       }
 

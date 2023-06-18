@@ -1,4 +1,3 @@
-import {keyboard} from "./keyboard.js";
 import {mouse} from "./mouse.js";
 
 import './debug.js';
@@ -27,8 +26,7 @@ Hooks.on("ready", function() {
     roundNumericMovementCost: true
   };
   instance.registerHooks();
-  keyboard.addHook("Alt", instance.altKeyHandler.bind(instance));
-  mouse.addHook(instance.dragHandler.bind(instance))
+   mouse.addHook(instance.dragHandler.bind(instance))
 });
 
 Hooks.on("hoverToken", (token, hovering) =>{
