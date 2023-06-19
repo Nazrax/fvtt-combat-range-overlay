@@ -203,7 +203,7 @@ Hooks.on("updateToken", (tokenDocument, updateData, options, someId) => {
   const tokenId = tokenDocument.id;
   const realToken = canvasTokensGet(tokenId); // Get the real token
   updateLocation(realToken, updateData);
-  if (!realToken.inCombat || Settings.updatePositionInCombat()) {
+  if (!realToken.inCombat || updatePositionInCombat()) {
     updateMeasureFrom(realToken, updateData);
   }
   globalThis.combatRangeOverlay.instance.fullRefresh();
