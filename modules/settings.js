@@ -244,5 +244,5 @@ export function getSpeedAttrPath() {
 }
 
 export function updatePositionInCombat() {
-  return game.settings.get(MODULE_ID.settingNames.UPDATE_POSITION_IN_COMBAT);
+  return game.settings.get(MODULE_ID, settingNames.UPDATE_POSITION_IN_COMBAT);
 }
