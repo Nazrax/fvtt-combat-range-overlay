@@ -28,6 +28,7 @@ const settingNames = {
   SHOW_WEAPON_RANGE: "show-weapon-range",
   SPEED_ATTR_PATH: "speed-attr-path",
   INFO_BUTTON: "info-button",
+  UPDATE_POSITION_IN_COMBAT: "update-position-in-combat"
 };
 const hiddenSettings = [settingNames.IS_ACTIVE];
 const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS, settingNames.IGNORE_DIFFICULT_TERRAIN];
@@ -240,4 +241,8 @@ export function isShowWeaponRange() {
 
 export function getSpeedAttrPath() {
   return game.settings.get(MODULE_ID, settingNames.SPEED_ATTR_PATH);
+}
+
+export function updatePositionInCombat() {
+  return game.settings.get(MODULE_ID.settingNames.UPDATE_POSITION_IN_COMBAT);
 }

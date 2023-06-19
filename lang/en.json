@@ -50,6 +50,8 @@
     "speed-attr-path": "Internal attribute path for Speed",
     "speed-attr-path-hint": "Advanced: Set this only if you're using a System that can't autodetect token Speed",
     "info-button": "Basic Information",
+    "update-position-in-combat": "Update overlay source in combat",
+    "update-position-in-combat-hint": "When off, the overlay will not automatically update upon movement in combat",
     "token-speed-warning-gm": "I can't autodetect token speed; please manually set your token's speed and/or set the Speed Attribute in the module settings (and maybe open an issue to add support for your System)",
     "token-speed-warning-player": "Please manually set your token's speed (and maybe ask your GM to configure the Speed Attribute in the module settings)",
     "keybindings": {
