@@ -1,7 +1,7 @@
 import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
 import {canvasTokensGet, getCurrentToken, uiNotificationsWarn} from "./utility.js"
 import {debugLog} from "./debug.js"
-import {getSpeedAttrPath} from "./settings.js"
+import {getSpeedAttrPath, updatePositionInCombat} from "./settings.js"
 
 export class TokenInfo {
   static _tokenInfoMap = new Map();

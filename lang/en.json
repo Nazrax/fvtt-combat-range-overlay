@@ -61,11 +61,11 @@
       },
       "quickSettings": {
         "name": "Quick settings",
-        "hint": "Will bring up the override panel if held when clicking the overlay control button \ue068"
+        "hint": "Will bring up the override panel if held when clicking the overlay control button"
       },
       "resetMeasureFrom": {
         "name": "Reset active token",
-        "hint": "Will reset the active token if held when clicking the overlay control button \ue068"
+        "hint": "Will reset the active token if held when clicking the overlay control button"
       }
     }
   }
