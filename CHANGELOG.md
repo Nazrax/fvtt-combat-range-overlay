@@ -1,4 +1,7 @@
 # Changelog
+## 2.2.3 - 2023/06/20
+### Added
+- Add changelog
 ## 2.2.2 - 2023/06/19
 ### Fixed
 - Fix typo preventing position toggle setting from working
