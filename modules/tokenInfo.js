@@ -101,7 +101,7 @@ export class TokenInfo {
         range.push(weaponObject);
       }
     }
-    return range;
+    return range.sort((a, b) => {a.range - b.range});
   }
 
   get speedOverride() {

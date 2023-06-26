@@ -171,7 +171,7 @@ export class Overlay {
 
   calculateTargetRangeMap() {
     const targetMap = new Map();
-    const weaponRangeInTiles = TokenInfo.current.weaponRange.map(i => i / FEET_PER_TILE);
+    const weaponRangeInTiles = TokenInfo.current.weaponRangeColor.map(i => ({range: i / FEET_PER_TILE, ...i}));
 
     for (const targetToken of game.user.targets) {
       targetMap.set(targetToken.id, calculateTilesInRange(weaponRangeInTiles, targetToken));
@@ -187,7 +187,7 @@ export class Overlay {
     }
 
     const tilesMovedPerAction = TokenInfo.current.speed / FEET_PER_TILE;
-    const weaponRangeInTiles = TokenInfo.current.weaponRange.map(i => i / FEET_PER_TILE);
+    const weaponRangeInTiles = TokenInfo.current.weaponRangeColor.map(i => ({range: i / FEET_PER_TILE, ...i}));
     const myDisposition = getCombatantTokenDisposition(currentToken);
     debugLog("drawPotentialTargets", "|", "Current disposition", myDisposition);
 
@@ -473,7 +473,7 @@ export class Overlay {
         drawTile = true;
       } else {
         for (const idealTile of idealTileMap.values()) {
-          if (tile.upstreamOf(idealTile)) {
+          if (tile.upstreamOf(idealTile.tile)) {
             drawTile = true;
             break;
           }
@@ -508,7 +508,7 @@ export class Overlay {
         let color = colorByActions[colorIndex];
         let cornerPt = tile.pt;
         if (idealTileMap.has(tile.key)) {
-          this.overlays.distanceOverlay.lineStyle(highlightLineWidth, highlightLineColor);
+          this.overlays.distanceOverlay.lineStyle(highlightLineWidth, idealTileMap.get(tile.key).color);
         } else {
           this.overlays.distanceOverlay.lineStyle(0, 0);
         }
@@ -548,7 +548,7 @@ function buildRangeMap(targetMap) {
       const tileKey = tile.key;
       let count = rangeMap.get(tileKey) ?? 0;
       count++;
-      rangeMap.set(tileKey, count);
+      rangeMap.set(tileKey, {count: count, color: tile.color});
     }
   }
   return rangeMap;
@@ -557,8 +557,8 @@ function buildRangeMap(targetMap) {
 function calculateIdealTileMap(movementTileMap, targetMap, rangeMap) {
   const idealTileMap = new Map();
   for (const tile of movementTileMap.values()) {
-    if (rangeMap.get(tile.key) === targetMap.size) { // Every target is reachable from here
-      idealTileMap.set(tile.key, tile);
+    if (rangeMap.get(tile.key).count === targetMap.size) { // Every target is reachable from here
+      idealTileMap.set(tile.key, {tile: tile, color: rangeMap.get(tile.key).color});
     }
   }
   return idealTileMap;
@@ -574,15 +574,16 @@ function calculateTilesInRange(rangeInTiles, targetToken) {
   const targetGridWidth = Math.floor(targetToken.hitArea.width / canvasGridSize());
 
   for (const rangeInTilesElement of rangeInTiles) {
+    const weaponColor = rangeInTilesElement.color;
     // Loop over X and Y deltas, computing distance for only a single quadrant
-    for(let gridXDelta = 0; gridXDelta <= rangeInTilesElement; gridXDelta++) {
-      for(let gridYDelta = 0; gridYDelta <= rangeInTilesElement; gridYDelta++) {
+    for(let gridXDelta = 0; gridXDelta <= rangeInTilesElement.range; gridXDelta++) {
+      for(let gridYDelta = 0; gridYDelta <= rangeInTilesElement.range; gridYDelta++) {
         if (gridXDelta === 0 && gridYDelta === 0) {
           continue;
         }
 
         const shotDistance = calculateGridDistance({x: 0, y: 0}, {x: gridXDelta, y: gridYDelta});
-        if (shotDistance < rangeInTilesElement + FUDGE) { // We're within range
+        if (shotDistance < rangeInTilesElement.range + FUDGE) { // We're within range
           // We need to test visibility for all 4 quadrants
           // Use sets so we don't have to explicitly test for "on the same row/column as"
           const gridXSet = new Set();
@@ -593,7 +594,7 @@ function calculateTilesInRange(rangeInTiles, targetToken) {
           gridYSet.add(targetGridY - gridYDelta);
           for (const testGridX of gridXSet) {
             for (const testGridY of gridYSet) {
-              const testTile = new GridTile(testGridX, testGridY);
+              const testTile = new GridTile(testGridX, testGridY, weaponColor);
               //const testTilePoint = testTile.pt;
               let isDupe = false;
               for (const entry of tileSet) {
