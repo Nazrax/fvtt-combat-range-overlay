@@ -557,8 +557,10 @@ function buildRangeMap(targetMap) {
 function calculateIdealTileMap(movementTileMap, targetMap, rangeMap) {
   const idealTileMap = new Map();
   for (const tile of movementTileMap.values()) {
-    if (rangeMap.get(tile.key).count === targetMap.size) { // Every target is reachable from here
-      idealTileMap.set(tile.key, {tile: tile, color: rangeMap.get(tile.key).color});
+    if (rangeMap.get(tile.key)) {
+      if (rangeMap.get(tile.key).count === targetMap.size) { // Every target is reachable from here
+        idealTileMap.set(tile.key, {tile: tile, color: rangeMap.get(tile.key).color});
+      }
     }
   }
   return idealTileMap;
