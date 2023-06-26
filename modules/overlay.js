@@ -13,11 +13,15 @@ import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
 import {mouse} from "./mouse.js";
 import {debugLog} from "./debug.js"
+import {colorSettingNames} from "./colorPicker.js"
 
-const actionsToShow = 2;
+const actionsToShow = game.settings.get(MODULE_ID, 'actions-shown');
 
 // Colors
-const colorByActions = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080]; // white, blue, yellow, red, purple
+const colorByActions = []; // white, blue, yellow, red, purple
+for (let i = 0; i < 5; i++) {
+  colorByActions.push(game.settings.get(MODULE_ID, colorSettingNames[i]))
+}
 const highlightLineColor = 0xffffff; // white
 const pathLineColor = 0x0000ff; // blue
 const wallLineColor = 0x40e0d0; // turquoise

@@ -2,6 +2,7 @@ import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
 import {canvasTokensGet, getCurrentToken, uiNotificationsWarn} from "./utility.js"
 import {debugLog} from "./debug.js"
 import {getSpeedAttrPath, updatePositionInCombat} from "./settings.js"
+import {colorSettingNames} from "./colorPicker.js"
 
 export class TokenInfo {
   static _tokenInfoMap = new Map();
@@ -67,7 +68,10 @@ export class TokenInfo {
   get weaponRangeColor() {
     const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
     const baseReach = this.token.actor.system.attributes.reach.base
-    const colors = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080];
+    const colors = []
+    for (let i = 5; i < 8; i++) {
+      colorByActions.push(game.settings.get(MODULE_ID, colorSettingNames[i]))
+    }
     let range = []
     for (const [index, weapon] of weapons.entries()) {
       let weaponObject = {range: DEFAULT_WEAPON_RANGE, color: colors[index], weapon: weapon.id};
