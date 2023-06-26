@@ -64,20 +64,27 @@ export class TokenInfo {
       dflt;
   }
 
-   get weaponRange() {
+  get weaponRangeColor() {
     const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
     const baseReach = this.token.actor.system.attributes.reach.base
+    const colors = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080];
     let range = []
-    for (const weapon of weapons) {
-      const hasReach = weapon.system.traits.value.includes('reach')
+    for (const [index, weapon] of weapons.entries()) {
+      let weaponObject = {range: DEFAULT_WEAPON_RANGE, color: colors[index], weapon: weapon.id};
+      const hasReach = weapon.system.traits.value.includes('reach');
       if (weapon.system.traits.value.includes('combination')) {
-        hasReach ? range.push(baseReach + DEFAULT_WEAPON_RANGE) : range.push(DEFAULT_WEAPON_RANGE);
-        range.push(weapon.rangeIncrement);
+        hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
+        range.push(weaponObject);
+        range.push({range: weapon.rangeIncrement, color: colors[index], weapon: weapon.id});
       } else if (weapon.isRanged || weapon.isThrown) {
-        range.push(weapon.rangeIncrement);
-      } else hasReach ? range.push(baseReach + DEFAULT_WEAPON_RANGE) : range.push(DEFAULT_WEAPON_RANGE);
+        weaponObject.range = weapon.rangeIncrement;
+        range.push(weaponObject);
+      } else {
+        hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
+        range.push(weaponObject);
+      }
     }
-    return range;
+    return range.sort((a, b) => {a.range - b.range});
   }
 
   get speedOverride() {

@@ -2,9 +2,10 @@ import {MAX_DIST} from "./constants.js"
 import {TokenInfo} from "./tokenInfo.js"
 
 export class GridTile {
-  constructor(gx, gy) {
+  constructor(gx, gy, color) {
     this.gx = gx;
     this.gy = gy;
+    this.color = color;
     this.distance = MAX_DIST;
     this.visited = false;
     this.upstreams = undefined;
