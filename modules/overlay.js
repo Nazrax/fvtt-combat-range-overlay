@@ -171,7 +171,7 @@ export class Overlay {
 
   calculateTargetRangeMap() {
     const targetMap = new Map();
-    const weaponRangeInTiles = TokenInfo.current.weaponRangeColor.map(i => ({...i, range: i / FEET_PER_TILE}));
+    const weaponRangeInTiles = TokenInfo.current.weaponRangeColor.map(i => ({...i, range: i.range / FEET_PER_TILE}));
 
     for (const targetToken of game.user.targets) {
       targetMap.set(targetToken.id, calculateTilesInRange(weaponRangeInTiles, targetToken));
@@ -187,7 +187,7 @@ export class Overlay {
     }
 
     const tilesMovedPerAction = TokenInfo.current.speed / FEET_PER_TILE;
-    const weaponRangeInTiles = TokenInfo.current.weaponRangeColor.map(i => ({...i, range: i / FEET_PER_TILE}));
+    const weaponRangeInTiles = TokenInfo.current.weaponRangeColor.map(i => ({...i, range: i.range / FEET_PER_TILE}));
     const myDisposition = getCombatantTokenDisposition(currentToken);
     debugLog("drawPotentialTargets", "|", "Current disposition", myDisposition);
 
