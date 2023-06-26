@@ -390,7 +390,12 @@ export class Overlay {
       return;
     }
 
-    const range = TokenInfo.current.weaponRange;
+    const range = []
+    TokenInfo.current.weaponRangeColor.forEach((i) => {
+      if (!range.includes(i.range)) {
+        range.push(i.range)
+      }
+    });
 
     const style = Object.assign({}, weaponRangeStyle);
     style.fontSize = style.fontSize * (canvasGridSize() / BASE_GRID_SIZE);

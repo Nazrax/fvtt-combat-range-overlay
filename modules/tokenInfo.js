@@ -64,22 +64,6 @@ export class TokenInfo {
       dflt;
   }
 
-   get weaponRange() {
-    const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
-    const baseReach = this.token.actor.system.attributes.reach.base
-    let range = []
-    for (const weapon of weapons) {
-      const hasReach = weapon.system.traits.value.includes('reach')
-      if (weapon.system.traits.value.includes('combination')) {
-        hasReach ? range.push(baseReach + DEFAULT_WEAPON_RANGE) : range.push(DEFAULT_WEAPON_RANGE);
-        range.push(weapon.rangeIncrement);
-      } else if (weapon.isRanged || weapon.isThrown) {
-        range.push(weapon.rangeIncrement);
-      } else hasReach ? range.push(baseReach + DEFAULT_WEAPON_RANGE) : range.push(DEFAULT_WEAPON_RANGE);
-    }
-    return range;
-  }
-
   get weaponRangeColor() {
     const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
     const baseReach = this.token.actor.system.attributes.reach.base
