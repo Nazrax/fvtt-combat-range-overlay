@@ -91,8 +91,7 @@ export class TokenInfo {
       if (weapon.system.traits.value.includes('combination')) {
         hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
         range.push(weaponObject);
-        weaponObject.range = weapon.rangeIncrement;
-        range.push(weaponObject);
+        range.push({range: weapon.rangeIncrement, color: colors[index], weapon: weapon.id});
       } else if (weapon.isRanged || weapon.isThrown) {
         weaponObject.range = weapon.rangeIncrement;
         range.push(weaponObject);
