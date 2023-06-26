@@ -1,4 +1,7 @@
 # Changelog
+## 2.3.0 - 2023/06/26
+### Added
+- Make weapons show in different colours when targeting
 ## 2.2.3 - 2023/06/20
 ### Added
 - Add changelog
