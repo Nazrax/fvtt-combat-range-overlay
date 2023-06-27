@@ -1,7 +1,7 @@
 import {MODULE_ID} from "./constants.js"
 
-const colorSettingNames = [
-    'no-action',
+export const colorSettingNames = [
+    'no-actions',
     'one-action',
     'two-actions',
     'three-actions',
@@ -11,7 +11,7 @@ const colorSettingNames = [
     'weapon-three'
 ]
 
-const defaultColors = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080, 0xffffff, 0x0000ff, 0xffff00]
+const defaultColors = ["#ffffff", "#0000ff", "#ffff00", "#ff0000", "#800080", "#ffffff", "#0000ff", "#ffff00"]
 
 Hooks.once("init", () => {
     if (game.modules.get('colorsettings') && game.modules.get('colorsettings')?.active) {
@@ -19,7 +19,7 @@ Hooks.once("init", () => {
             new window.Ardittristan.ColorSetting(MODULE_ID, colorSettingName, {
                 name: `${MODULE_ID}.color-picker.${colorSettingName}.name`,
                 hint: `${MODULE_ID}.color-picker.${colorSettingName}.hint`,
-                label: 'color-picker.label',
+                label: `${MODULE_ID}.color-picker.label`,
                 restricted: false,
                 defaultColor: `${defaultColors[index]}`,
                 scope: "client",
@@ -32,7 +32,7 @@ Hooks.once("init", () => {
             game.settings.register(MODULE_ID, colorSettingName, {
                 name: `${MODULE_ID}.color-picker.${colorSettingName}.name`,
                 hint: `${MODULE_ID}.color-picker.${colorSettingName}.hint`,
-                label: 'color-picker.label',
+                label: `${MODULE_ID}.color-picker.label`,
                 restricted: false,
                 defaultColor: `${defaultColors[index]}`,
                 scope: "client",

@@ -72,7 +72,7 @@
     },
     "color-picker": {
       "label": "Colour Picker",
-      "no-action": {
+      "no-actions": {
         "name": "No action colour",
         "hint": "The colour that will be used to colour spaces/targets that can be reached in no actions"
       },
@@ -80,15 +80,15 @@
         "name": "One action colour",
         "hint": "The colour that will be used to colour spaces/targets that can be reached in one action"
       },
-      "two-action": {
+      "two-actions": {
         "name": "Two action colour",
         "hint": "The colour that will be used to colour spaces/targets that can be reached in two actions"
       },
-      "three-action": {
+      "three-actions": {
         "name": "Three action colour",
         "hint": "The colour that will be used to colour spaces/targets that can be reached in three actions"
       },
-      "four-action": {
+      "four-actions": {
         "name": "Four action colour",
         "hint": "The colour that will be used to colour spaces/targets that can be reached in four actions"
       },
