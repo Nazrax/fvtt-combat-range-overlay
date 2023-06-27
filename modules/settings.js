@@ -29,10 +29,11 @@ const settingNames = {
   SPEED_ATTR_PATH: "speed-attr-path",
   INFO_BUTTON: "info-button",
   UPDATE_POSITION_IN_COMBAT: "update-position-in-combat",
-  ACTIONS_SHOWN: "actions-shown"
+  ACTIONS_SHOWN: "actions-shown",
+  SHOWN_NOTIFICATION: "shown-notification"
 };
-const hiddenSettings = [settingNames.IS_ACTIVE];
-const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS, settingNames.IGNORE_DIFFICULT_TERRAIN];
+const hiddenSettings = [settingNames.IS_ACTIVE, settingNames.SHOWN_NOTIFICATION];
+const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS, settingNames.IGNORE_DIFFICULT_TERRAIN, settingNames.SHOWN_NOTIFICATION];
 const ignore = [settingNames.MOVEMENT_ALPHA, settingNames.IC_VISIBILITY, settingNames.OOC_VISIBILITY, settingNames.RANGES, settingNames.DIAGONALS, settingNames.SPEED_ATTR_PATH, settingNames.INFO_BUTTON, settingNames.ACTIONS_SHOWN];
 
 Hooks.once("init", () => {

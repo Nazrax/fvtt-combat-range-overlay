@@ -1,4 +1,8 @@
 # Changelog
+## 2.4.1 - 2023/06/27
+### Added
+- Add v11 combatibility
+- Add notification if color settings module not present
 ## 2.4.0 - 2023/06/27
 ### Added
 - Add colour picker

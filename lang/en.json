@@ -105,6 +105,6 @@
         "hint": "The colour that will be used to highlight spaces that targets can be reached from by weapon three"
       }
     },
-    "no-color-settings": "lib - color settings is not installed/active so colours can't be changed"
+    "no-color-settings": "lib - color settings is not installed/active so colours can't be changed. This message will not be shown again."
   }
 }

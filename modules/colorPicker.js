@@ -37,7 +37,6 @@ Hooks.once("init", () => {
             })
         }
     } else {
-        ui.notifications.notify(`${MODULE_ID}.no-color-settings`);
         for (const [index, colorSettingName] of colorSettingNames.entries()) {
             game.settings.register(MODULE_ID, colorSettingName, {
                 name: `${MODULE_ID}.color-picker.${colorSettingName}.name`,

@@ -41,6 +41,10 @@ Hooks.on("ready", function() {
   mouse.addHook(instance.dragHandler.bind(instance))
   window.addEventListener("keydown", instance.altKeyHandler.bind(instance));
   window.addEventListener("keyup", instance.altKeyHandler.bind(instance));
+  if (game.settings.get(MODULE_ID, "shown-notification")) {
+    ui.notifications.warn(game.i18n.localize(`${MODULE_ID}.no-color-settings`));
+    game.settings.set(MODULE_ID, "shown-notification", true)
+  };
 });
 
 Hooks.on("hoverToken", (token, hovering) =>{
