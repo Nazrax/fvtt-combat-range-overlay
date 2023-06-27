@@ -19,6 +19,8 @@ async function _submitDialog(i, html) {
 
 function _showRangeDialog() {
   const buttons = Object.fromEntries(getWeaponRanges().map((i) => [i, {label: i, callback: (html) => _submitDialog(i, html)}]));
+  const resetButton = {icon: '<i class="fas fa-arrow-rotate-left"></i>', label: "Reset", callback: () => _token.document.unsetFlag("combat-range-overlay", "weaponRange")}
+  buttons.reset = resetButton;
 
   const speedOverride = TokenInfo.current.speedOverride ?? "";
   const ignoreDifficultTerrainChecked = TokenInfo.current.ignoreDifficultTerrain ? "checked" : "";
