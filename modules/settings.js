@@ -14,9 +14,6 @@ export const diagonals = {
   TEN: "ten"
 }
 
-export const colorByActions = []
-export const colors = []
-
 const settingNames = {
   IS_ACTIVE: 'is-active',
   IC_VISIBILITY: 'ic_visibility',
@@ -74,7 +71,10 @@ Hooks.once("init", () => {
       max: 4,
       step: 1
     },
-    onChange: () => {globalThis.combatRangeOverlay.instance.fullRefresh()}
+    onChange: () => {
+      globalThis.combatRangeOverlay.actionsToShow = game.settings.get(MODULE_ID, 'actions-shown');
+      globalThis.combatRangeOverlay.instance.fullRefresh()
+    }
   });
 
   game.settings.register(MODULE_ID, settingNames.MOVEMENT_ALPHA, {

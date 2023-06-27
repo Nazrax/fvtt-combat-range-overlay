@@ -1,4 +1,5 @@
 import {MODULE_ID} from "./constants.js"
+import {colorByActions, colors} from"./settings.js"
 
 export const colorSettingNames = [
     'no-actions',
@@ -23,7 +24,12 @@ Hooks.once("init", () => {
                 restricted: false,
                 defaultColor: `${defaultColors[index]}`,
                 scope: "client",
-                onChange: () => {globalThis.combatRangeOverlay.instance.fullRefresh()}
+                onChange: () => {
+                    for (let i = 0; i < 5; i++) {
+                        globalThis.combatRangeOverlay.colorByActions.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).slice(0, -2).replace("#", "0x"), 16))
+                      };
+                    globalThis.combatRangeOverlay.instance.fullRefresh()
+                }
             })
         }
     } else {
@@ -36,7 +42,12 @@ Hooks.once("init", () => {
                 restricted: false,
                 defaultColor: `${defaultColors[index]}`,
                 scope: "client",
-                onChange: () => {globalThis.combatRangeOverlay.instance.fullRefresh()}
+                onChange: () => {
+                    for (let i = 5; i < 8; i++) {
+                        globalThis.combatRangeOverlay.colors.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).slice(0, -2).replace("#", "0x"), 16))
+                      };
+                    globalThis.combatRangeOverlay.instance.fullRefresh()
+                }
             })
         }
     }

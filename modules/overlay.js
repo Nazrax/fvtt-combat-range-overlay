@@ -87,14 +87,13 @@ export class Overlay {
     this.hookIDs = {};
     this.newTarget = false;
     this.justActivated = false;
-    this.actionsToShow = 2;
   }
 
   // Use Dijkstra's shortest path algorithm
   calculateMovementCosts() {
     // TODO Fix caching
     const tilesPerAction = TokenInfo.current.speed / FEET_PER_TILE;
-    const maxTiles = tilesPerAction * this.actionsToShow;
+    const maxTiles = tilesPerAction * globalThis.combatRangeOverlay.actionsToShow;
 
     const currentToken = getCurrentToken();
     const currentTokenInfo = TokenInfo.getById(currentToken.id);
@@ -209,8 +208,8 @@ export class Overlay {
             }
           }
 
-          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), Settings.colorByActions.length-1);
-          let color = Settings.colorByActions[colorIndex];
+          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), globalThis.combatRangeOverlay.colorByActions.length-1);
+          let color = globalThis.combatRangeOverlay.colorByActions[colorIndex];
 
           const tokenOverlay = new PIXI.Graphics();
           tokenOverlay.lineStyle(potentialTargetLineWidth, color)
@@ -508,8 +507,8 @@ export class Overlay {
         }
 
         // Color tile based on number of actions to reach it
-        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), Settings.colorByActions.length-1);
-        let color = Settings.colorByActions[colorIndex];
+        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), globalThis.combatRangeOverlay.colorByActions.length-1);
+        let color = globalThis.combatRangeOverlay.colorByActions[colorIndex];
         let cornerPt = tile.pt;
         if (idealTileMap.has(tile.key)) {
           this.overlays.distanceOverlay.lineStyle(highlightLineWidth, idealTileMap.get(tile.key).color);
