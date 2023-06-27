@@ -88,7 +88,6 @@ export class Overlay {
     this.newTarget = false;
     this.justActivated = false;
     this.actionsToShow = 2;
-    this.colorByActions = []
   }
 
   // Use Dijkstra's shortest path algorithm
@@ -210,8 +209,8 @@ export class Overlay {
             }
           }
 
-          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), this.colorByActions.length-1);
-          let color = this.colorByActions[colorIndex];
+          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), Settings.colorByActions.length-1);
+          let color = Settings.colorByActions[colorIndex];
 
           const tokenOverlay = new PIXI.Graphics();
           tokenOverlay.lineStyle(potentialTargetLineWidth, color)
@@ -509,8 +508,8 @@ export class Overlay {
         }
 
         // Color tile based on number of actions to reach it
-        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), this.colorByActions.length-1);
-        let color = this.colorByActions[colorIndex];
+        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), Settings.colorByActions.length-1);
+        let color = Settings.colorByActions[colorIndex];
         let cornerPt = tile.pt;
         if (idealTileMap.has(tile.key)) {
           this.overlays.distanceOverlay.lineStyle(highlightLineWidth, idealTileMap.get(tile.key).color);

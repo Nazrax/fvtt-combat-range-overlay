@@ -14,6 +14,9 @@ export const diagonals = {
   TEN: "ten"
 }
 
+export const colorByActions = []
+export const colors = []
+
 const settingNames = {
   IS_ACTIVE: 'is-active',
   IC_VISIBILITY: 'ic_visibility',

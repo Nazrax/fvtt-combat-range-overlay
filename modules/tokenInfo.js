@@ -1,7 +1,7 @@
 import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
 import {canvasTokensGet, getCurrentToken, uiNotificationsWarn} from "./utility.js"
 import {debugLog} from "./debug.js"
-import {getSpeedAttrPath, updatePositionInCombat} from "./settings.js"
+import {getSpeedAttrPath, updatePositionInCombat, colors} from "./settings.js"
 import {colorSettingNames} from "./colorPicker.js"
 
 export class TokenInfo {

@@ -30,10 +30,10 @@ Hooks.on("ready", function() {
   instance.registerHooks();
   instance.actionsToShow = game.settings.get(MODULE_ID, 'actions-shown');
   for (let i = 0; i < 5; i++) {
-    instance.colorByActions.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).replace("#", "0x"),16))
+    colorByActions.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).replace("#", "0x"), 16))
   };
   for (let i = 5; i < 8; i++) {
-    TokenInfo.colors.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).replace("#", "0x"),16))
+    colors.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).replace("#", "0x"), 16))
   }
   mouse.addHook(instance.dragHandler.bind(instance))
   window.addEventListener("keydown", instance.altKeyHandler.bind(instance));
