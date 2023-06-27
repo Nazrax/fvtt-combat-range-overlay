@@ -19,6 +19,8 @@ export class TokenInfo {
 
     this.updateLocation();
     this.updateMeasureFrom();
+    
+    this.colors = [];
 
     TokenInfo._tokenInfoMap.set(tokenId, this);
   }
@@ -68,13 +70,9 @@ export class TokenInfo {
   get weaponRangeColor() {
     const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
     const baseReach = this.token.actor.system.attributes.reach.base
-    const colors = []
-    for (let i = 5; i < 8; i++) {
-      colorByActions.push(game.settings.get(MODULE_ID, colorSettingNames[i]))
-    }
     let range = []
     for (const [index, weapon] of weapons.entries()) {
-      let weaponObject = {range: DEFAULT_WEAPON_RANGE, color: colors[index], weapon: weapon.id};
+      let weaponObject = {range: DEFAULT_WEAPON_RANGE, color: TokenInfo.colors[index], weapon: weapon.id};
       const hasReach = weapon.system.traits.value.includes('reach');
       if (weapon.system.traits.value.includes('combination')) {
         hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;

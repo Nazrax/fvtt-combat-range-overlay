@@ -15,13 +15,7 @@ import {mouse} from "./mouse.js";
 import {debugLog} from "./debug.js"
 import {colorSettingNames} from "./colorPicker.js"
 
-const actionsToShow = game.settings.get(MODULE_ID, 'actions-shown');
-
 // Colors
-const colorByActions = []; // white, blue, yellow, red, purple
-for (let i = 0; i < 5; i++) {
-  colorByActions.push(game.settings.get(MODULE_ID, colorSettingNames[i]))
-}
 const highlightLineColor = 0xffffff; // white
 const pathLineColor = 0x0000ff; // blue
 const wallLineColor = 0x40e0d0; // turquoise
@@ -93,13 +87,15 @@ export class Overlay {
     this.hookIDs = {};
     this.newTarget = false;
     this.justActivated = false;
+    this.actionsToShow = 2;
+    this.colorByActions = []
   }
 
   // Use Dijkstra's shortest path algorithm
   calculateMovementCosts() {
     // TODO Fix caching
     const tilesPerAction = TokenInfo.current.speed / FEET_PER_TILE;
-    const maxTiles = tilesPerAction * actionsToShow;
+    const maxTiles = tilesPerAction * this.actionsToShow;
 
     const currentToken = getCurrentToken();
     const currentTokenInfo = TokenInfo.getById(currentToken.id);
@@ -214,8 +210,8 @@ export class Overlay {
             }
           }
 
-          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), colorByActions.length-1);
-          let color = colorByActions[colorIndex];
+          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), this.colorByActions.length-1);
+          let color = this.colorByActions[colorIndex];
 
           const tokenOverlay = new PIXI.Graphics();
           tokenOverlay.lineStyle(potentialTargetLineWidth, color)
@@ -513,8 +509,8 @@ export class Overlay {
         }
 
         // Color tile based on number of actions to reach it
-        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), colorByActions.length-1);
-        let color = colorByActions[colorIndex];
+        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), this.colorByActions.length-1);
+        let color = this.colorByActions[colorIndex];
         let cornerPt = tile.pt;
         if (idealTileMap.has(tile.key)) {
           this.overlays.distanceOverlay.lineStyle(highlightLineWidth, idealTileMap.get(tile.key).color);
