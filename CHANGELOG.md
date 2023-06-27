@@ -1,4 +1,7 @@
 # Changelog
+## 2.4.2 - 2023/06/28
+### Fixed
+- Fix typos preventing function
 ## 2.4.1 - 2023/06/27
 ### Added
 - Add v11 combatibility
