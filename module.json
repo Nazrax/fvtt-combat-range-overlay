@@ -33,17 +33,20 @@
         "type": "module",
         "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
         "compatibility": {}
-      },
+      }
+    ],
+    "recommends": [
       {
         "id": "colorsettings",
         "type": "module",
         "manifest": "https://raw.githubusercontent.com/ardittristan/VTTColorSettings/master/module.json",
+        "reason": "Allows colours to be customised",
         "compatibility": {}
       }
     ]
   },
   "compatibility": {
     "minimum": "10",
-    "verified": "10.291"
+    "verified": "11.302"
   }
 }
