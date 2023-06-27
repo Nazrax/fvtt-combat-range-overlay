@@ -179,6 +179,7 @@ export class Overlay {
 
   drawPotentialTargets(movementCosts) {
     const currentToken = getCurrentToken();
+    const colorByActions = globalThis.combatRangeOverlay.colorByActions;
 
     if (!currentToken.inCombat) {
       return;
@@ -208,8 +209,8 @@ export class Overlay {
             }
           }
 
-          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), globalThis.combatRangeOverlay.colorByActions.length-1);
-          let color = globalThis.combatRangeOverlay.colorByActions[colorIndex];
+          const colorIndex = Math.min(Math.ceil(diagonalDistance(bestCost) / tilesMovedPerAction), colorByActions.length-1);
+          let color = colorByActions[colorIndex];
 
           const tokenOverlay = new PIXI.Graphics();
           tokenOverlay.lineStyle(potentialTargetLineWidth, color)
@@ -457,6 +458,7 @@ export class Overlay {
   drawCosts(movementCostMap, targetRangeMap) {
     const rangeMap = buildRangeMap(targetRangeMap);
     const idealTileMap = calculateIdealTileMap(movementCostMap, targetRangeMap, rangeMap);
+    const colorByActions = globalThis.combatRangeOverlay.colorByActions;
     let showOnlyTargetPath = targetRangeMap.size > 0;
     if (showOnlyTargetPath && idealTileMap.size === 0) {
       if (this.newTarget) {
@@ -507,8 +509,8 @@ export class Overlay {
         }
 
         // Color tile based on number of actions to reach it
-        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), globalThis.combatRangeOverlay.colorByActions.length-1);
-        let color = globalThis.combatRangeOverlay.colorByActions[colorIndex];
+        const colorIndex = Math.min(Math.ceil(diagonalDistance(tile.distance) / tilesMovedPerAction), colorByActions.length-1);
+        let color = colorByActions[colorIndex];
         let cornerPt = tile.pt;
         if (idealTileMap.has(tile.key)) {
           this.overlays.distanceOverlay.lineStyle(highlightLineWidth, idealTileMap.get(tile.key).color);
