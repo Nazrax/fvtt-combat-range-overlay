@@ -28,11 +28,12 @@ const settingNames = {
   SHOW_WEAPON_RANGE: "show-weapon-range",
   SPEED_ATTR_PATH: "speed-attr-path",
   INFO_BUTTON: "info-button",
-  UPDATE_POSITION_IN_COMBAT: "update-position-in-combat"
+  UPDATE_POSITION_IN_COMBAT: "update-position-in-combat",
+  ACTIONS_SHOWN: "actions-shown"
 };
 const hiddenSettings = [settingNames.IS_ACTIVE];
 const defaultFalse = [settingNames.IS_ACTIVE, settingNames.SHOW_DIFFICULT_TERRAIN, settingNames.SHOW_WALLS, settingNames.IGNORE_DIFFICULT_TERRAIN];
-const ignore = [settingNames.MOVEMENT_ALPHA, settingNames.IC_VISIBILITY, settingNames.OOC_VISIBILITY, settingNames.RANGES, settingNames.DIAGONALS, settingNames.SPEED_ATTR_PATH, settingNames.INFO_BUTTON];
+const ignore = [settingNames.MOVEMENT_ALPHA, settingNames.IC_VISIBILITY, settingNames.OOC_VISIBILITY, settingNames.RANGES, settingNames.DIAGONALS, settingNames.SPEED_ATTR_PATH, settingNames.INFO_BUTTON, settingNames.ACTIONS_SHOWN];
 
 Hooks.once("init", () => {
   game.settings.registerMenu(MODULE_ID, settingNames.INFO_BUTTON, {
@@ -57,6 +58,24 @@ Hooks.once("init", () => {
       });
     }
   }
+
+  game.settings.register(MODULE_ID, settingNames.ACTIONS_SHOWN, {
+    name: `${MODULE_ID}.${settingNames.ACTIONS_SHOWN}`,
+    hint: `${MODULE_ID}.${settingNames.ACTIONS_SHOWN}-hint`,
+    scope: 'client',
+    config: true,
+    type: Number,
+    default: 2,
+    range: {
+      min: 0,
+      max: 4,
+      step: 1
+    },
+    onChange: () => {
+      globalThis.combatRangeOverlay.actionsToShow = game.settings.get(MODULE_ID, 'actions-shown');
+      globalThis.combatRangeOverlay.instance.fullRefresh()
+    }
+  });
 
   game.settings.register(MODULE_ID, settingNames.MOVEMENT_ALPHA, {
     name: `${MODULE_ID}.${settingNames.MOVEMENT_ALPHA}`,

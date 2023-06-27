@@ -13,11 +13,9 @@ import {TokenInfo} from "./tokenInfo.js";
 import * as Settings from "./settings.js";
 import {mouse} from "./mouse.js";
 import {debugLog} from "./debug.js"
-
-const actionsToShow = 2;
+import {colorSettingNames} from "./colorPicker.js"
 
 // Colors
-const colorByActions = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080]; // white, blue, yellow, red, purple
 const highlightLineColor = 0xffffff; // white
 const pathLineColor = 0x0000ff; // blue
 const wallLineColor = 0x40e0d0; // turquoise
@@ -95,7 +93,7 @@ export class Overlay {
   calculateMovementCosts() {
     // TODO Fix caching
     const tilesPerAction = TokenInfo.current.speed / FEET_PER_TILE;
-    const maxTiles = tilesPerAction * actionsToShow;
+    const maxTiles = tilesPerAction * globalThis.combatRangeOverlay.actionsToShow;
 
     const currentToken = getCurrentToken();
     const currentTokenInfo = TokenInfo.getById(currentToken.id);
@@ -181,6 +179,7 @@ export class Overlay {
 
   drawPotentialTargets(movementCosts) {
     const currentToken = getCurrentToken();
+    const colorByActions = globalThis.combatRangeOverlay.colorByActions;
 
     if (!currentToken.inCombat) {
       return;
@@ -459,6 +458,7 @@ export class Overlay {
   drawCosts(movementCostMap, targetRangeMap) {
     const rangeMap = buildRangeMap(targetRangeMap);
     const idealTileMap = calculateIdealTileMap(movementCostMap, targetRangeMap, rangeMap);
+    const colorByActions = globalThis.combatRangeOverlay.colorByActions;
     let showOnlyTargetPath = targetRangeMap.size > 0;
     if (showOnlyTargetPath && idealTileMap.size === 0) {
       if (this.newTarget) {

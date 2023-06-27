@@ -6,6 +6,8 @@ import './controls.js';
 import './tokenInfo.js';
 import {Overlay} from "./overlay.js"
 import {debugLog} from "./debug.js"
+import {MODULE_ID} from "./constants.js"
+import {colorSettingNames} from "./colorPicker.js"
 
 /* Tasks
  * Basic functionality:
@@ -23,9 +25,19 @@ Hooks.on("ready", function() {
     instance,
     showNumericMovementCost: false,
     showPathLines: false,
-    roundNumericMovementCost: true
+    roundNumericMovementCost: true,
+    actionsToShow: 2,
+    colorByActions: [],
+    colors: []
   };
   instance.registerHooks();
+  globalThis.combatRangeOverlay.actionsToShow = game.settings.get(MODULE_ID, 'actions-shown');
+  for (let i = 0; i < 5; i++) {
+    globalThis.combatRangeOverlay.colorByActions.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).slice(0, -2).replace("#", "0x"), 16))
+  };
+  for (let i = 5; i < 8; i++) {
+    globalThis.combatRangeOverlay.colors.push(parseInt(game.settings.get(MODULE_ID, colorSettingNames[i]).slice(0, -2).replace("#", "0x"), 16))
+  }
   mouse.addHook(instance.dragHandler.bind(instance))
   window.addEventListener("keydown", instance.altKeyHandler.bind(instance));
   window.addEventListener("keyup", instance.altKeyHandler.bind(instance));

@@ -50,8 +50,10 @@
     "speed-attr-path": "Internal attribute path for Speed",
     "speed-attr-path-hint": "Advanced: Set this only if you're using a System that can't autodetect token Speed",
     "info-button": "Basic Information",
-    "update-position-in-combat": "Update overlay source in combat",
+    "update-position-in-combat": "Update overlay source in combat?",
     "update-position-in-combat-hint": "When off, the overlay will not automatically update upon movement in combat",
+    "actions-shown": "Actions to show",
+    "actions-shown-hint": "The number of actions to show on the overlay",
     "token-speed-warning-gm": "I can't autodetect token speed; please manually set your token's speed and/or set the Speed Attribute in the module settings (and maybe open an issue to add support for your System)",
     "token-speed-warning-player": "Please manually set your token's speed (and maybe ask your GM to configure the Speed Attribute in the module settings)",
     "keybindings": {
@@ -67,6 +69,42 @@
         "name": "Reset active token",
         "hint": "Will reset the active token if held when clicking the overlay control button"
       }
-    }
+    },
+    "color-picker": {
+      "label": "Colour Picker",
+      "no-actions": {
+        "name": "No action colour",
+        "hint": "The colour that will be used to colour spaces/targets that can be reached in no actions"
+      },
+      "one-action": {
+        "name": "One action colour",
+        "hint": "The colour that will be used to colour spaces/targets that can be reached in one action"
+      },
+      "two-actions": {
+        "name": "Two action colour",
+        "hint": "The colour that will be used to colour spaces/targets that can be reached in two actions"
+      },
+      "three-actions": {
+        "name": "Three action colour",
+        "hint": "The colour that will be used to colour spaces/targets that can be reached in three actions"
+      },
+      "four-actions": {
+        "name": "Four action colour",
+        "hint": "The colour that will be used to colour spaces/targets that can be reached in four actions"
+      },
+      "weapon-one": {
+        "name": "Weapon one colour",
+        "hint": "The colour that will be used to highlight spaces that targets can be reached from by weapon one"
+      },
+      "weapon-two": {
+        "name": "Weapon two colour",
+        "hint": "The colour that will be used to highlight spaces that targets can be reached from by weapon two"
+      },
+      "weapon-three": {
+        "name": "Weapon three colour",
+        "hint": "The colour that will be used to highlight spaces that targets can be reached from by weapon three"
+      }
+    },
+    "no-color-settings": "lib - color settings is not installed/active so colours can't be changed"
   }
 }

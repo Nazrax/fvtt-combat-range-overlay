@@ -2,6 +2,7 @@ import {DEFAULT_WEAPON_RANGE, FLAG_NAMES, MODULE_ID} from "./constants.js"
 import {canvasTokensGet, getCurrentToken, uiNotificationsWarn} from "./utility.js"
 import {debugLog} from "./debug.js"
 import {getSpeedAttrPath, updatePositionInCombat} from "./settings.js"
+import {colorSettingNames} from "./colorPicker.js"
 
 export class TokenInfo {
   static _tokenInfoMap = new Map();
@@ -18,6 +19,8 @@ export class TokenInfo {
 
     this.updateLocation();
     this.updateMeasureFrom();
+    
+    this.colors = [];
 
     TokenInfo._tokenInfoMap.set(tokenId, this);
   }
@@ -65,26 +68,34 @@ export class TokenInfo {
   }
 
   get weaponRangeColor() {
-    const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
-    const baseReach = this.token.actor.system.attributes.reach.base
-    const colors = [0xffffff, 0x0000ff, 0xffff00, 0xff0000, 0x800080];
-    let range = []
-    for (const [index, weapon] of weapons.entries()) {
-      let weaponObject = {range: DEFAULT_WEAPON_RANGE, color: colors[index], weapon: weapon.id};
-      const hasReach = weapon.system.traits.value.includes('reach');
-      if (weapon.system.traits.value.includes('combination')) {
-        hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
-        range.push(weaponObject);
-        range.push({range: weapon.rangeIncrement, color: colors[index], weapon: weapon.id});
-      } else if (weapon.isRanged || weapon.isThrown) {
-        weaponObject.range = weapon.rangeIncrement;
-        range.push(weaponObject);
-      } else {
-        hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
-        range.push(weaponObject);
+    if (this.getFlag(FLAG_NAMES.WEAPON_RANGE)) {
+      let range = [{
+        range: this.getFlag(FLAG_NAMES.WEAPON_RANGE),
+        color: globalThis.combatRangeOverlay.colors[0]
+      }];
+      return range
+    } else { 
+      const weapons = this.token.actor.items.filter(i => i.type == 'weapon' && i.isEquipped);
+      const baseReach = this.token.actor.system.attributes.reach.base
+      const colors = globalThis.combatRangeOverlay.colors;
+      let range = []
+      for (const [index, weapon] of weapons.entries()) {
+        let weaponObject = {range: DEFAULT_WEAPON_RANGE, color: colors[index], weapon: weapon.id};
+        const hasReach = weapon.system.traits.value.includes('reach');
+        if (weapon.system.traits.value.includes('combination')) {
+          hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
+          range.push(weaponObject);
+          range.push({range: weapon.rangeIncrement, color: colors[index], weapon: weapon.id});
+        } else if (weapon.isRanged || weapon.isThrown) {
+          weaponObject.range = weapon.rangeIncrement;
+          range.push(weaponObject);
+        } else {
+          hasReach ? weaponObject.range = baseReach + DEFAULT_WEAPON_RANGE : weaponObject.range = DEFAULT_WEAPON_RANGE;
+          range.push(weaponObject);
+        }
       }
+      return range.sort((a, b) => {a.range - b.range});
     }
-    return range.sort((a, b) => {a.range - b.range});
   }
 
   get speedOverride() {

@@ -9,7 +9,7 @@ export default class ModuleInfoApp extends FormApplication {
     // noinspection JSUnresolvedFunction
     return mergeObject(super.defaultOptions, {
       id: "combat-range-overlay-info",
-      title: `${MODULE_ID}.info`,
+      title: `${MODULE_ID}.info-button`,
       template: `modules/${MODULE_ID}/templates/info.hbs`,
       popOut: true,
       width: 500,

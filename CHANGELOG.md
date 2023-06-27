@@ -1,4 +1,10 @@
 # Changelog
+## 2.4.0 - 2023/06/27
+### Added
+- Add colour picker
+- Add setting for max actions shown
+### Fixed
+- Fix range setting dialog
 ## 2.3.0 - 2023/06/26
 ### Added
 - Make weapons show in different colours when targeting
