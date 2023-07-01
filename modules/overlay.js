@@ -627,7 +627,11 @@ function calculateTilesInRange(rangeInTiles, targetToken) {
 // Abstract this because IntelliJ complains that canvas.walls.checkCollision isn't accessible and we don't want to annotate it everywhere
 function checkCollision(ray, opts) {
   // noinspection JSUnresolvedFunction
+  if (parseInt(game.version) < 11) {
+    return canvas.walls.checkCollision(ray, opts);
+  } else {
   return CONFIG.Canvas.polygonBackends[opts.type].testCollision(ray.A, ray.B, opts);
+  }
 }
 
 // Copied straight from foundry.js (_sortCombatants)
