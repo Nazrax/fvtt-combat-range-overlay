@@ -1,4 +1,7 @@
 # Changelog
+## 2.4.4 - 2023/07/01
+### Fixed
+- Fix colorsettings notification
 ## 2.4.3 - 2023/07/01
 ### Fixed
 - Fix v10 backwards compatibility
