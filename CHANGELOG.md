@@ -1,4 +1,7 @@
 # Changelog
+## 2.4.3 - 2023/07/01
+### Fixed
+- Fix v10 backwards compatibility
 ## 2.4.2 - 2023/06/28
 ### Fixed
 - Fix typos preventing function
