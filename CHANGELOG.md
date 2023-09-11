@@ -1,4 +1,7 @@
 # Changelog
+## 2.4.5 - 2023/09/11
+### Fixed
+- Fix range for ranged weapons
 ## 2.4.4 - 2023/07/01
 ### Fixed
 - Fix colorsettings notification
